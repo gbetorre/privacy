@@ -12,7 +12,7 @@
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 2 of the License, or
+ *   the Free Software Foundation; either version 3 of the License, or
  *   (at your option) any later version.
  *
  *   This program is distributed in the hope that it will be useful,
@@ -33,16 +33,13 @@
 package it.tol;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 
 /**
  * <p>Query &egrave; l'interfaccia pubblic contenente tutte le query della
- * web-application &nbsp;<code>Processi on Line (prol)</code>, tranne quelle
+ * web-application &nbsp;<code>Trattamenti on Line (tol)</code>, tranne quelle
  * composte dinamicamente da metodi implementati, di cui comunque dichiara
  * l'interfaccia.</p>
- * <p>Definisce inoltre alcune costanti di utilit&agrave;.</p>
  *
  * @author <a href="mailto:gianroberto.torre@gmail.com">Giovanroberto Torre</a>
  */
@@ -51,6 +48,7 @@ public interface Query extends Serializable {
     /* ********************************************************************** *
      *                          1. Query comuni                               *
      * ********************************************************************** */
+    
     /**
      * <p>Estrae le classi Command previste per la/le applicazione/i.</p>
      */
@@ -159,21 +157,111 @@ public interface Query extends Serializable {
     /* ********************************************************************** *
      *     2. Query di Selezione specifiche di TOL (Trattamenti On Line)      *
      * ********************************************************************** */
+
+    /**
+     * Seleziona l'elenco dei trattamenti di dati in stato attivo e collegati 
+     * ad una rilevazione il cui identificativo viene passato come parametro.
+     */
     public static final String GET_TRATTAMENTI =
             "SELECT " +
-            "       T.codice            AS \"codice\"" +
-            "   ,   T.nome              AS \"nome\"" +
-            "   ,   T.descrizione       AS \"informativa\"" +
-            "   ,   T.ordinale          AS \"ordinale\"" +
+            "       T.codice                    AS \"codice\"" +
+            "   ,   T.nome                      AS \"nome\"" +
+            "   ,   T.descrizione               AS \"informativa\"" +
+            "   ,   T.ordinale                  AS \"ordinale\"" +
             "   FROM trattamento T" +
             "       INNER JOIN rilevazione R ON T.id_rilevazione = R.id" +
             "   WHERE R.id = ?" +
             "       AND T.id_stato = 1" +
             "   ORDER BY codice";
     
+    /**
+     * Seleziona i dettagli di uno specifico trattamento dati, 
+     * in uno stato determinato oppure in qualunque stato 
+     * (a seconda dei parametri passati sul primo e sul secondo argomento della clausola); 
+     * il codice identificativo del trattamento viene passato 
+     * come parametro e il trattamento stesso risulta collegato ad una rilevazione, 
+     * il cui identificativo viene passato come parametro.
+     */
+    public static final String GET_TRATTAMENTO =
+            "SELECT " +
+            "       T.nome                      AS \"nome\"" +
+            "   ,   T.note                      AS \"informativa\"" +
+            "   ,   T.ordinale                  AS \"ordinale\"" +
+            "   ,   T.codice                    AS \"codice\"" +
+            "   ,   T.descrizione               AS \"descrizione\"" +
+            "   ,   T.finalita                  AS \"finalita\"" +
+            "   ,   T.termini_ultimi            AS \"terminiUltimi\"" +
+            "   ,   T.extra_info                AS \"extraInfo\"" +
+            "   ,   T.dati_personali            AS \"datiPersonali\"" +
+            "   ,   T.dati_sanitari             AS \"datiSanitari\"" +
+            "   ,   T.dati_orientamentosex      AS \"datiOrientamentoSex\"" +
+            "   ,   T.dati_etnia_relig_app      AS \"datiEtniaReligApp\"" +
+            "   ,   T.dati_minore_eta           AS \"datiMinoreEta\"" +
+            "   ,   T.dati_genetici             AS \"datiGenetici\"" +
+            "   ,   T.dati_biometrici           AS \"datiBiometrici\"" +
+            "   ,   T.dati_giudiziari           AS \"datiGiudiziari\"" +
+            "   ,   T.dati_ubicazione           AS \"datiUbicazione\"" +
+            "   ,   T.dati_pseudonimizzati      AS \"datiPseudonimizzati\"" +
+            "   ,   T.dati_anonimizzati         AS \"datiAnonimizzati\"" +
+            "   ,   T.data_ultima_modifica      AS \"dataUltimaModifica\"" +
+            "   ,   T.ora_ultima_modifica       AS \"oraUltimaModifica\"" +
+            "   ,   T.id_usr_ultima_modifica    AS \"autoreUltimaModifica\"" +
+            "   ,   T.id_tipo_trattamento       AS \"idTipo\"" +
+            "   ,   T.id_stato                  AS \"idStato\"" +
+            "   FROM trattamento T" +
+            "       INNER JOIN rilevazione R ON T.id_rilevazione = R.id" +
+            "   WHERE T.codice = ?" +
+            "       AND R.id = ?" +           
+            "       AND (T.id_stato = ? OR -1 = ?)";
+    
+    /**
+     * Seleziona ulteriori informazioni relative a un trattamento dati, 
+     * in uno stato determinato oppure in qualunque stato 
+     * (a seconda dei parametri passati sul primo e sul secondo argomento della clausola); 
+     * collegato ad una rilevazione, 
+     * il cui identificativo viene passato come parametro.
+     */
+    public static final String GET_EXTRAINFO_TRATTAMENTO =
+            "SELECT " +
+            "       T.misure_sicurezza          AS \"extraInfo1\"" +
+            "   ,   T.luoghi_custodia           AS \"extraInfo2\"" +
+            "   ,   T.destinatari               AS \"extraInfo3\"" +
+            "   FROM trattamento T" +
+            "       INNER JOIN rilevazione R ON T.id_rilevazione = R.id" +
+            "   WHERE T.codice = ?" +
+            "       AND R.id = ?" +           
+            "       AND (T.id_stato = ? OR -1 = ?)";
+    
+    /**
+     * Seleziona un elenco di attivit&agrave; di trattamento dati, associate 
+     * ad uno specifico trattamento dati 
+     * il cui codice identificativo viene passato 
+     * come parametro e che risulta collegato ad una rilevazione, 
+     * il cui identificativo viene passato come parametro.
+     */
+    public static final String GET_ATTIVITA =
+            "SELECT " +
+            "       A.nome                      AS \"nome\"" +
+            "   ,   A.ordinale                  AS \"ordinale\"" +
+            "   ,   A.codice                    AS \"codice\"" +
+            "   ,   A.descrizione               AS \"descrizione\"" +
+            "   ,   A.datainizio                AS \"dataInizio\"" +
+            "   ,   A.datafine                  AS \"dataFine\"" +
+            "   ,   A.data_ultima_modifica      AS \"dataUltimaModifica\"" +
+            "   ,   A.ora_ultima_modifica       AS \"oraUltimaModifica\"" +
+            "   ,   A.id_usr_ultima_modifica    AS \"autoreUltimaModifica\"" +
+            "   FROM attivita A" +
+            "       INNER JOIN attivita_trattamento AT ON AT.cod_attivita = A.codice" +
+            "       INNER JOIN trattamento T ON AT.cod_trattamento = T.codice" +
+            "       INNER JOIN rilevazione R ON A.id_rilevazione = R.id" +
+            "   WHERE T.codice = ?" +
+            "       AND R.id = ?" +           
+            "       AND (T.id_stato = ? OR -1 = ?)";
+    
     /* ********************************************************************** *
      *                        3. Query di inserimento                         *
      * ********************************************************************** */
+    
     /**
      * <p>Query per inserimento di ultimo accesso al sistema.</p>
      */
@@ -191,6 +279,7 @@ public interface Query extends Serializable {
     /* ********************************************************************** *
      *                       4. Query di aggiornamento                        *
      * ********************************************************************** */
+    
     /**
      * <p>Query per aggiornamento di ultimo accesso al sistema.</p>
      */
