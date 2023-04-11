@@ -12,7 +12,7 @@
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 2 of the License, or
+ *   the Free Software Foundation; either version 3 of the License, or
  *   (at your option) any later version.
  *
  *   This program is distributed in the hope that it will be useful,
@@ -47,6 +47,7 @@ import javax.servlet.http.HttpSession;
 
 import com.oreilly.servlet.ParameterParser;
 
+import it.tol.command.HomeCommand;
 import it.tol.ConfigManager;
 import it.tol.Constants;
 import it.tol.DBWrapper;
@@ -56,6 +57,7 @@ import it.tol.bean.DepartmentBean;
 import it.tol.bean.ItemBean;
 import it.tol.bean.PersonBean;
 import it.tol.bean.ProcessBean;
+import it.tol.bean.ProcessingBean;
 import it.tol.exception.AttributoNonValorizzatoException;
 import it.tol.exception.CommandException;
 import it.tol.exception.WebStorageException;
@@ -63,9 +65,9 @@ import it.tol.exception.WebStorageException;
 
 /** 
  * <p><code>RegisterCommand.java</code><br />
- * Implementa la logica per la gestione dei rischi corruttivi (ROL).</p>
+ * Implementa la logica per la gestione del registro dei trattamenti (TOL).</p>
  * 
- * <p>Created on Tue 12 Apr 2022 09:46:04 AM CEST</p>
+ * <p>Created on Mon 27th of March, 2023 at 13:03:26</p>
  * 
  * @author <a href="mailto:giovanroberto.torre@univr.it">Giovanroberto Torre</a>
  */
@@ -160,7 +162,7 @@ public class RegisterCommand extends ItemBean implements Command, Constants {
         // Utente loggato
         PersonBean user = null;
         // Trattamento specifico
-        //RiskBean risk = null;
+        ProcessingBean treat = null;
         // Elenco dei trattamenti legati alla rilevazione
         ArrayList<ItemBean> treats = null;
         // Elenco strutture collegate alla rilevazione
@@ -180,14 +182,13 @@ public class RegisterCommand extends ItemBean implements Command, Constants {
          * ******************************************************************** */
         // Recupera o inizializza 'codice rilevazione' (Survey)
         String codeSur = parser.getStringParameter(PARAM_SURVEY, DASH);
-        // Recupera o inizializza 'tipo pagina'   
-        String part = parser.getStringParameter("p", DASH);
         // Flag di scrittura
         Boolean writeAsObject = (Boolean) req.getAttribute("w");
         boolean write = writeAsObject.booleanValue();
-        // Dichiara data ed ora di una intervista cercata
-        Date questDate = null;
-        Time questTime = null;
+        // Recupera o inizializza 'tipo pagina'   
+        String part = parser.getStringParameter("p", DASH);
+        // Recupera o inizializza 'id trattamento'   
+        String codeT = parser.getStringParameter("idT", DASH);
         /* ******************************************************************** *
          *      Instanzia nuova classe DBWrapper per il recupero dei dati       *
          * ******************************************************************** */
@@ -255,8 +256,14 @@ public class RegisterCommand extends ItemBean implements Command, Constants {
                         /* ************************************************ *
                          *             SELECT a Specific Treatment          *
                          * ************************************************ */
-                        if (BEAN_DEFAULT_ID > DEFAULT_ID) {
-
+                        if (!codeT.equals(DASH)) {
+                            // Recupera il trattamento dati
+                            ItemBean stato = new ItemBean(GET_ALL_BY_CLAUSE, GET_ALL_BY_CLAUSE);
+                            treat = db.getTrattamento(user, codeT, stato, survey);
+                            // Ha bisogno di personalizzare le breadcrumbs
+                            LinkedList<ItemBean> breadCrumbs = (LinkedList<ItemBean>) req.getAttribute("breadCrumbs");
+                            bC = HomeCommand.makeBreadCrumbs(breadCrumbs, ELEMENT_LEV_1, "Trattamento Dati");
+                            // Pagina
                             fileJspT = fileDettaglio;
                         } else {
                             /* ************************************************ *
@@ -296,9 +303,9 @@ public class RegisterCommand extends ItemBean implements Command, Constants {
          *              Settaggi in request dei valori calcolati                *
          * ******************************************************************** */
         // Imposta nella request oggetto trattamento specifico
-        /*if (risk != null) {
-            req.setAttribute("rischio", risk);
-        }  */      
+        if (treat != null) {
+            req.setAttribute("trattamento", treat);
+        }      
         // Imposta nella request elenco completo registro trattamenti
         if (treats != null) {
             req.setAttribute("registro", treats);
@@ -318,14 +325,6 @@ public class RegisterCommand extends ItemBean implements Command, Constants {
         // Imposta struttura contenente tutti i parametri di navigazione già estratti
         if (!params.isEmpty()) {
             req.setAttribute("params", params);
-        }
-        // Imposta nella request data di un'intervista cercata
-        if (questDate != null) {
-            req.setAttribute("dataRisposte", questDate);
-        }
-        // Imposta nella request ora di un'intervista cercata
-        if (questTime != null) {
-            req.setAttribute("oraRisposte", questTime);
         }
         // Imposta nella request le breadcrumbs in caso siano state personalizzate
         if (bC != null) {
