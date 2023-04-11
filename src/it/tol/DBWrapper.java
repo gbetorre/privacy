@@ -12,7 +12,7 @@
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 2 of the License, or
+ *   the Free Software Foundation; either version 3 of the License, or
  *   (at your option) any later version.
  *
  *   This program is distributed in the hope that it will be useful,
@@ -52,12 +52,14 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import it.tol.bean.ActivityBean;
 import it.tol.bean.BeanUtil;
 import it.tol.bean.CodeBean;
 import it.tol.bean.DepartmentBean;
 import it.tol.bean.ItemBean;
 import it.tol.bean.PersonBean;
 import it.tol.bean.ProcessBean;
+import it.tol.bean.ProcessingBean;
 import it.tol.exception.AttributoNonValorizzatoException;
 import it.tol.exception.CommandException;
 import it.tol.exception.WebStorageException;
@@ -696,6 +698,110 @@ public class DBWrapper implements Query, Constants {
                 return trattamenti;
             } catch (AttributoNonValorizzatoException anve) {
                 String msg = FOR_NAME + "Si e\' verificato un problema nell\'accesso ad un attributo obbligatorio del bean; verificare identificativo della rilevazione.\n";
+                LOG.severe(msg);
+                throw new WebStorageException(msg + anve.getMessage(), anve);
+            } catch (SQLException sqle) {
+                String msg = FOR_NAME + "Oggetto non valorizzato; problema nella query.\n";
+                LOG.severe(msg);
+                throw new WebStorageException(msg + sqle.getMessage(), sqle);
+            } finally {
+                try {
+                    con.close();
+                } catch (NullPointerException npe) {
+                    String msg = FOR_NAME + "Ooops... problema nella chiusura della connessione.\n";
+                    LOG.severe(msg);
+                    throw new WebStorageException(msg + npe.getMessage());
+                } catch (SQLException sqle) {
+                    throw new WebStorageException(FOR_NAME + sqle.getMessage());
+                }
+            }
+        } catch (SQLException sqle) {
+            String msg = FOR_NAME + "Problema con la creazione della connessione.\n";
+            LOG.severe(msg);
+            throw new WebStorageException(msg + sqle.getMessage(), sqle);
+        }
+    }
+    
+    
+    /**
+     * <p>Restituisce uno specifico trattamento di dati personali
+     * il cui identificativo viene passato come parametro,
+     * collegato ad una rilevazione il cui identificativo viene 
+     * passato come parametro e che si trova in uno stato determinato
+     * oppure in tutti gli stati, a seconda dei valori passati in un oggetto
+     * che il metodo accetta come argomento.</p>
+     * // TODO: COMMENTO
+     * @param user      oggetto rappresentante la persona loggata, di cui si vogliono verificare i diritti
+     * @param idTrattamento 
+     * @param stato 
+     * @param survey    oggetto contenente i dati della rilevazione
+     * @return <code>ArrayList&lt;ItemBean&gt;</code> - lista di trattamenti
+     * @throws WebStorageException se si verifica un problema nell'esecuzione della query, nel recupero di attributi obbligatori non valorizzati o in qualche altro tipo di puntamento
+     */
+    @SuppressWarnings("static-method")
+    public ProcessingBean getTrattamento(PersonBean user,
+                                         String idTrattamento,
+                                         ItemBean stato,
+                                         CodeBean survey)
+                                  throws WebStorageException {
+        try (Connection con = tol_manager.getConnection()) {
+            PreparedStatement pst = null;
+            ResultSet rs, rs1, rs2 = null;
+            int nextParam = NOTHING;
+            ProcessingBean trattamento = null;
+            //ItemBean extraInfo = null;
+            //ActivityBean attivita = null;
+            AbstractList<ActivityBean> vAttivita = new ArrayList<>();
+            // TODO: Controllare se user è superuser
+            try {
+                pst = con.prepareStatement(GET_TRATTAMENTO);
+                pst.clearParameters();
+                pst.setString(++nextParam, idTrattamento);
+                pst.setInt(++nextParam, survey.getId());
+                pst.setInt(++nextParam, stato.getCod1());
+                pst.setInt(++nextParam, stato.getCod2());
+                rs = pst.executeQuery();
+                if (rs.next()) {
+                    trattamento = new ProcessingBean();
+                    BeanUtil.populate(trattamento, rs);
+                    // Recupera ulteriori informazioni relative al trattamento
+                    nextParam = NOTHING;
+                    pst = null;
+                    pst = con.prepareStatement(GET_EXTRAINFO_TRATTAMENTO);
+                    pst.clearParameters();
+                    pst.setString(++nextParam, idTrattamento);
+                    pst.setInt(++nextParam, survey.getId());
+                    pst.setInt(++nextParam, stato.getCod1());
+                    pst.setInt(++nextParam, stato.getCod2());
+                    rs1 = pst.executeQuery();
+                    if (rs1.next()) {
+                        ItemBean extraInfo = new ItemBean();
+                        BeanUtil.populate(extraInfo, rs1);
+                        trattamento.setExtraInfos(extraInfo);
+                    }
+                    // Ha trovato il trattamento: ne cerca le attività
+                    nextParam = NOTHING;
+                    pst = null;
+                    pst = con.prepareStatement(GET_ATTIVITA);
+                    pst.clearParameters();
+                    pst.setString(++nextParam, idTrattamento);
+                    pst.setInt(++nextParam, survey.getId());
+                    pst.setInt(++nextParam, stato.getCod1());
+                    pst.setInt(++nextParam, stato.getCod2());
+                    rs2 = pst.executeQuery();
+                    while (rs2.next()) {
+                        ActivityBean attivita = new ActivityBean();
+                        BeanUtil.populate(attivita, rs2);
+                        vAttivita.add(attivita);
+                    }
+                    trattamento.setAttivita((ArrayList<ActivityBean>) vAttivita);
+                }
+                // Just tries to engage the Garbage Collector
+                pst = null;
+                // Get Out
+                return trattamento;
+            } catch (AttributoNonValorizzatoException anve) {
+                String msg = FOR_NAME + "Si e\' verificato un problema nell\'accesso ad un attributo obbligatorio di un bean.\n";
                 LOG.severe(msg);
                 throw new WebStorageException(msg + anve.getMessage(), anve);
             } catch (SQLException sqle) {
