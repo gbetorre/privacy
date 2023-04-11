@@ -1,13 +1,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ include file="URL.jspf" %>
 <c:set var="trattamenti" value="${requestScope.registro}" scope="page" />
-    <h3 class="mt-1 m-0 font-weight-bold">Registro trattamenti</h3>
+    <h3 class="mt-1 m-0 font-weight-bold">Registro Trattamenti</h3>
 <%--     <a href="${riCSV}" class="float-right" title="Scarica il database completo del registro dei rischi corruttivi"> --%>
 <%--       <i class="fas fa-download"></i>Scarica tutti i dati -->
 <!--     </a> --%>
     <hr class="riga"/>
     <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css /> -->
-    <div >
+    <div>
         <div class="row">
             <div class="col-md-offset-1 ">
                 <div class="panel">
@@ -30,7 +30,7 @@
           </td>
           <td  width="2%">&nbsp;</td>
            <td  width="*">            
-           <a href="#">
+           <a href="${initParam.appName}/?q=tr&idT=${trattamento.codice}&r=${param['r']}">
               <c:out value="${trattamento.nome}" />
             </a></td>
             <td  width="4%"></td>
