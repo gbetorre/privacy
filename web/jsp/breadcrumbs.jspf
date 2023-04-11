@@ -15,7 +15,7 @@
         <li class="breadcrumb-item badge badge-pill "><a href="${item.url}"><c:out value="${item.labelWeb}" /></a></li>
         </c:when>
         <c:otherwise>
-        <li class="breadcrumb-item badge badge-pill badge-danger"><c:out value="${item.labelWeb}" /></li>
+        <li class="breadcrumb-item badge badge-pill badge-success"><c:out value="${item.labelWeb}" /></li>
         </c:otherwise>
         </c:choose>
       </c:forEach>
