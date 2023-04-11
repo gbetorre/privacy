@@ -220,6 +220,7 @@ e fornirvi il relativo significato e la relativa motivazione.
 - [1.2.1] (22/11/2022) Mostrato in nodo albero processi numero di input e fasi
 - [1.2.0] (21/11/2022) Implementato questo file di documentazione
 -->
+- [1.0.1] (11/04/2023) Bozza pagina dettaglio trattamento dati
 - [1.0.0] (27/03/2023) Initial commit
 
 
