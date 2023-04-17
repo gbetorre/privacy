@@ -56,9 +56,11 @@ L'applicazione web per la digitalizzazione del registro delle attivit&agrave; di
 </p>
 Attraverso l'alimentazione di una base dati, l'applicazione permette di ottenere una serie di indici relativi a specifici rischi cui possono essere esposti i database organizzativi presidiati dalle strutture appartenenti all'organizzazione. 
 Oltre a rendere l'organizzazione in regola rispetto a quanto previsto dalle norme (cfr. Regolamento UE 2016/679, art. 30), ottenere e mantenere un registro digitale delle attivit&agrave; di trattamento presenta, oltre alla possibilit&agrave; di disporre di appositi strumenti di ricerca utili per consentire all'ufficio privacy di ottenere indici sintetici riguardo ai dati personali che vengono trattati dall'organizzazione, una serie ulteriore di vantaggi, tra cui:
+
 * possibilit&agrave; di rigenerare il registro digitale da un anno all'altro operando poi solo per differenza rispetto all'anno precedente;
 * possibilit&agrave; di ottenere rapidamente estrazioni dati da presentare all'autorit&agrave; competente, in caso di ispezioni; 
 * possibilit&agrave; di effettuare Query analitiche sui dati trattati, che consentano di risalire alle misure di sicurezza messe in atto, e alle strutture interessate, in caso di data breach;
+
 e così via.
 
 Naturalmente, nessuno strumento informatico &egrave; in grado, da solo, di ottenere risultati come l'annullamento del danno in caso di data breach; pertanto ogni approfondimento analitico permesso dal software dovr&agrave; essere esaminato ed interpretato dai privacy specialists.
@@ -220,7 +222,8 @@ e fornirvi il relativo significato e la relativa motivazione.
 - [1.2.1] (22/11/2022) Mostrato in nodo albero processi numero di input e fasi
 - [1.2.0] (21/11/2022) Implementato questo file di documentazione
 -->
-- [1.0.1] (11/04/2023) Bozza pagina dettaglio trattamento dati
+- [1.0.2] (17/04/2023) Miglioramenti grafici e contenutistici alla pagina dettagli trattamento dati
+- [1.0.1] (11/04/2023) Bozza pagina dettagli trattamento dati
 - [1.0.0] (27/03/2023) Initial commit
 
 
