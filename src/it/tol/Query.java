@@ -233,13 +233,13 @@ public interface Query extends Serializable {
             "       AND (T.id_stato = ? OR -1 = ?)";
     
     /**
-     * Seleziona un elenco di attivit&agrave; di trattamento dati, associate 
-     * ad uno specifico trattamento dati 
-     * il cui codice identificativo viene passato 
-     * come parametro e che risulta collegato ad una rilevazione, 
-     * il cui identificativo viene passato come parametro.
+     * Seleziona un elenco di attivit&agrave; di trattamento dati, associate: 
+     * ad uno specifico trattamento dati:
+     * il cui codice identificativo viene passato come parametro, 
+     * che si trova in uno stato specificato tramite parametro,
+     * e collegato ad una rilevazione avente identificativo passato come parametro.
      */
-    public static final String GET_ATTIVITA =
+    public static final String GET_ATTIVITA_TRATTAMENTO =
             "SELECT " +
             "       A.nome                      AS \"nome\"" +
             "   ,   A.ordinale                  AS \"ordinale\"" +
@@ -257,6 +257,27 @@ public interface Query extends Serializable {
             "   WHERE T.codice = ?" +
             "       AND R.id = ?" +           
             "       AND (T.id_stato = ? OR -1 = ?)";
+    
+    /**
+     * Seleziona l'elenco degli interessati collegati ad uno specifico trattamento di dati: 
+     * il cui codice identificativo viene passato come parametro, 
+     * che si trova in uno stato specificato tramite parametro,
+     * e collegato ad una rilevazione avente identificativo passato come parametro.
+     */
+    public static final String GET_INTERESSATI_TRATTAMENTO =
+            "SELECT " +
+            "       I.id                        AS \"id\"" +
+            "   ,   I.nome                      AS \"nome\"" +
+            "   ,   I.descrizione               AS \"informativa\"" +
+            "   ,   I.ordinale                  AS \"ordinale\"" +
+            "   FROM interessati I" +
+            "       INNER JOIN interessati_trattamento IT ON IT.id_interessati = I.id" +
+            "       INNER JOIN trattamento T ON IT.cod_trattamento = T.codice" +
+            "       INNER JOIN rilevazione R ON IT.id_rilevazione = R.id" +
+            "   WHERE T.codice = ?" +
+            "       AND R.id = ?" +
+            "       AND (T.id_stato = ? OR -1 = ?)" +
+            "   ORDER BY I.nome";
     
     /* ********************************************************************** *
      *                        3. Query di inserimento                         *
