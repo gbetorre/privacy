@@ -36,14 +36,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Time;
-import java.sql.Types;
 import java.util.AbstractList;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -55,13 +49,10 @@ import javax.sql.DataSource;
 import it.tol.bean.ActivityBean;
 import it.tol.bean.BeanUtil;
 import it.tol.bean.CodeBean;
-import it.tol.bean.DepartmentBean;
 import it.tol.bean.ItemBean;
 import it.tol.bean.PersonBean;
-import it.tol.bean.ProcessBean;
 import it.tol.bean.ProcessingBean;
 import it.tol.exception.AttributoNonValorizzatoException;
-import it.tol.exception.CommandException;
 import it.tol.exception.WebStorageException;
 
 
@@ -746,12 +737,11 @@ public class DBWrapper implements Query, Constants {
                                   throws WebStorageException {
         try (Connection con = tol_manager.getConnection()) {
             PreparedStatement pst = null;
-            ResultSet rs, rs1, rs2 = null;
+            ResultSet rs, rs1, rs2, rs3 = null;
             int nextParam = NOTHING;
             ProcessingBean trattamento = null;
-            //ItemBean extraInfo = null;
-            //ActivityBean attivita = null;
             AbstractList<ActivityBean> vAttivita = new ArrayList<>();
+            AbstractList<CodeBean> vInteressati = new ArrayList<>();
             // TODO: Controllare se user è superuser
             try {
                 pst = con.prepareStatement(GET_TRATTAMENTO);
@@ -782,7 +772,7 @@ public class DBWrapper implements Query, Constants {
                     // Ha trovato il trattamento: ne cerca le attività
                     nextParam = NOTHING;
                     pst = null;
-                    pst = con.prepareStatement(GET_ATTIVITA);
+                    pst = con.prepareStatement(GET_ATTIVITA_TRATTAMENTO);
                     pst.clearParameters();
                     pst.setString(++nextParam, idTrattamento);
                     pst.setInt(++nextParam, survey.getId());
@@ -795,6 +785,22 @@ public class DBWrapper implements Query, Constants {
                         vAttivita.add(attivita);
                     }
                     trattamento.setAttivita((ArrayList<ActivityBean>) vAttivita);
+                    // Ha trovato il trattamento: ne cerca gli interessati
+                    nextParam = NOTHING;
+                    pst = null;
+                    pst = con.prepareStatement(GET_INTERESSATI_TRATTAMENTO);
+                    pst.clearParameters();
+                    pst.setString(++nextParam, idTrattamento);
+                    pst.setInt(++nextParam, survey.getId());
+                    pst.setInt(++nextParam, stato.getCod1());
+                    pst.setInt(++nextParam, stato.getCod2());
+                    rs3 = pst.executeQuery();
+                    while (rs3.next()) {
+                        CodeBean categoriaInteressati = new CodeBean();
+                        BeanUtil.populate(categoriaInteressati, rs3);
+                        vInteressati.add(categoriaInteressati);
+                    }
+                    trattamento.setInteressati((ArrayList<CodeBean>) vInteressati);
                 }
                 // Just tries to engage the Garbage Collector
                 pst = null;
