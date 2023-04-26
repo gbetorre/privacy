@@ -1,18 +1,27 @@
 /*=====================================================
-Style.css - Global Stylesheet for /rischi application 
+Style.css - Global Stylesheet for /provacy application 
 =====================================================*/
-html, body {
-    font-family: Verdana,sans-serif;
-    font-size: smaller;
-    line-height: 1.5;
-}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700;900&display=swap');
 
-pm.body {
-    background-color:#fffaf0;
-    color:#353833;
-    font-family: "Trebuchet MS", sans-serif;
-    font-size:90%;
-    margin:0;
+/*=====================================================
+=               < 768px     MOBILE         =
+===================================================== */
+@media only screen and (max-width : 767px) {
+  body {
+    background-color: white;
+    font-size: medium;
+    width: 100%;
+    overflow-x: scroll;
+  }
+}
+/* =================== END MOBILE =================== */
+
+*, body {
+    font-family: 'Poppins', sans-serif;
+    font-size: small;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 h3.heading {
@@ -25,12 +34,6 @@ h4.heading {
 	border-color: #99CCCC;
 	border-style: groove;
 	border-width: 1px;
-}
-
-body {
-  background-color: white;
-  width: 100%;
-  overflow-x: hidden;
 }
 
 .landing-card-body {
@@ -47,29 +50,8 @@ body {
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
 }
 
-ul.processo {
-	display: none;
-	margin-left: 4em;
-}
-
 ul.list-group > li {
 	background: none;
-}
-
-/*=====================================================
-=            		< 768px     MOBILE         =
-=====================================================*/
-@media only screen and (max-width : 767px) {
-body {
-	background-color: white;
-	font-size: medium;
-	width: 100%;
-	overflow-x: scroll;
-}
-}
-
-body.loginbody {
-	background-image: radial-gradient(#ffffff, #ddeeff);
 }
 
 a:link:not(.btn):not(.cc-link):not(.linkFooter):not(.nav-link):not(.helpInfo):not(.helpInfoTop):not(.page-link):not(.ico):not(.linkPopup):not(.linkWbsGrafico):not(.nav-main-link):not(.link-submenu), 
@@ -608,14 +590,6 @@ textarea {
   overflow-x: hidden; /* for Firefox (issue #5) */
 }
 
-.label { 
-	display: block; 
-	float: left; 
-	width: 120px;
-	text-align: right; 
-	margin-right: 5px; 
-}
-
 .pHeader {
 	font-family: sans-serif; 
 	font-size: 1.0em;
@@ -637,7 +611,7 @@ textarea {
 }
 
 .page {
-	width: 60%;
+	width: 68%;
 	margin-left: auto;
 	margin-right: auto;
 	margin-top: 20px; /* margin-top: 25px; */
