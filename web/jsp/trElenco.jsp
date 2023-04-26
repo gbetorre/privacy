@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ include file="URL.jspf" %>
 <c:set var="trattamenti" value="${requestScope.registro}" scope="page" />
     <h3 class="mt-1 m-0 font-weight-bold">Registro Trattamenti</h3>
@@ -16,9 +17,9 @@
                 <table class="table table-bordered table-hover table-sm" id="listTr">
                   <thead class="thead-light">
                     <tr>
-                      <th width="4%">Action</th>
+                      <th width="4%">Tipologia</th>
                       <th width="2%">#</th>
-                      <th width="*">Nome Trattamento Dati</th>
+                      <th width="*">Trattamento</th>
                       <th width="4%">Codice</th>
                       <th width="4%">View</th>
                     </tr>
@@ -27,14 +28,27 @@
                   <c:forEach var="trattamento" items="${trattamenti}" varStatus="status">
                     <tr class="active">
                       <td class="bgcolor1" width="4%">
+                    <c:choose>
+                      <c:when test="${fn:endsWith(trattamento.codice, \"-T\")}">
+                        Titolare
+                      </c:when>
+                      <c:when test="${fn:endsWith(trattamento.codice, \"-R\")}">
+                        Responsabile
+                      </c:when>
+                    </c:choose>
                       </td>
-                      <td  width="2%">&nbsp;</td>
-                       <td  width="*">            
-                       <a href="${initParam.appName}/?q=tr&idT=${trattamento.codice}&r=${param['r']}">
+                      <td  width="2%">${status.count}</td>
+                      <td  width="*">            
+                        <a href="${initParam.appName}/?q=tr&idT=${trattamento.codice}&r=${param['r']}">
                           <c:out value="${trattamento.nome}" />
-                        </a></td>
-                        <td  width="4%">${trattamento.codice}</td>
-                         <td  width="4%"></td>
+                        </a>
+                      </td>
+                      <td width="4%">${trattamento.codice}</td>
+                      <td width="4%">
+                        <a href="${initParam.appName}/?q=tr&idT=${trattamento.codice}&r=${param['r']}" class="btn btn-sm btn-success">
+                          <i class="fa fa-search"></i>
+                        </a>
+                      </td>
                     </tr>
                   </c:forEach>
                   </tbody>
