@@ -1,18 +1,90 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ include file="URL.jspf" %>
 <c:set var="trattamento" value="${requestScope.trattamento}" scope="page" />
 <fmt:parseDate var="lastModified" value="${trattamento.dataUltimaModifica}" pattern="yyyy-MM-dd" scope="page" />
 <fmt:formatDate var="dataUltimaModifica" value="${lastModified}" pattern="dd MMMMM yyyy" />
 <c:catch var="exception">
-    <div class="container-lg p-3 my-3 bg-primary text-white">
+    <div class="p-3 my-3 bg-primary text-white">
       <h2 align="center">
         <c:out value="${trattamento.nome}" />
       </h2>
       <div class="text-white centerlayout">(<c:out value="${trattamento.codice}" />)</div>
     </div>
-    <h3 class="bordo heading pHeader">Descrizione sintetica del trattamento</h3>
+  <c:choose>
+    <c:when test="${fn:endsWith(trattamento.codice, \"-T\")}">
     <div class="form-custom">
+      <dl class="list-group list-group-horizontal">
+        <dt class="bordo">
+          <strong>Titolare del Trattamento</strong>&nbsp;
+          <br><br>
+          Nota: contatti validi anche<br> 
+          qualora il titolare agisca<br> 
+          come Responsabile
+        </dt>
+        <dd class="list-group-item marginLeft">
+          Universit&agrave; degli Studi di Verona<br>
+          Via dell’Artigliere n. 8<br>
+          37129 - Verona<br>
+          C.F: 93009870234<br>
+          P.I. 01541040232<br>
+          Tel. 0458028777<br>
+          E-mail: privacy@ateneo.univr.it &nbsp; 
+        </dd>
+        <dt class="bordo marginLeftLarge">
+          <strong>Responsabile della<br> 
+          Protezione dei Dati (DPO)</strong>&nbsp;
+        </dt>
+        <dd class="list-group-item marginLeft">
+          GL CONSULTING S.R.L.<br>
+          Soggetto individuato quale referente<br> 
+          per il titolare: Gianluca Lombardi<br>
+          Tel. 0312242323 / 3482345012<br>
+          E-mail: info@gianlucalombardi.com<br>
+          PEC: gianluca.lombardi@ingpec.eu<br>
+        </dd>
+      </dl>
+    </div>
+    </c:when>
+    <c:when test="${fn:endsWith(trattamento.codice, \"-R\")}">
+    <div class="form-custom">
+      <dl class="list-group list-group-horizontal">
+        <dt class="bordo">
+          <strong>Responsabile del Trattamento</strong>&nbsp;
+          <br><br>
+          Nota: contatti validi anche<br> 
+          qualora il titolare agisca<br> 
+          come Responsabile
+        </dt>
+        <dd class="list-group-item marginLeft">
+          Universit&agrave; degli Studi di Verona<br>
+          Via dell’Artigliere n. 8<br>
+          37129 - Verona<br>
+          C.F: 93009870234<br>
+          P.I. 01541040232<br>
+          Tel. 0458028777<br>
+          E-mail: privacy@ateneo.univr.it       
+        </dd>
+        <dt class="bordo marginLeftLarge">
+          <strong>Responsabile della<br> 
+          Protezione dei Dati (DPO)</strong>&nbsp;
+        </dt>
+        <dd class="list-group-item marginLeft">
+          GL CONSULTING S.R.L.<br>
+          Soggetto individuato quale referente<br> 
+          per il titolare: Gianluca Lombardi<br>
+          Tel. 0312242323 / 3482345012<br>
+          E-mail: info@gianlucalombardi.com<br>
+          PEC: gianluca.lombardi@ingpec.eu<br>
+        </dd>
+      </dl>
+    </div>
+    </c:when>
+    </c:choose>
+    <div class="form-custom">
+      <h3 class="bordo heading pHeader">Descrizione sintetica del trattamento</h3>
       <div class="info">
         <c:out value="${trattamento.descrizione}" escapeXml="false" />
       </div>
@@ -34,8 +106,8 @@
   </c:if>
     </div>
     <hr class="separatore" />
-    <h3 class="bordo heading pHeader">Art. 30 1b): Descrizione delle Finalit&agrave; perseguite</h3>
     <div class="form-custom">
+      <h3 class="bordo heading pHeader">Art. 30 1b): Descrizione delle Finalit&agrave; perseguite</h3>
       <c:out value="${trattamento.finalita}" escapeXml="false" />
     </div>
     <hr class="separatore" />
@@ -47,8 +119,8 @@
     <hr class="separatore" />
   </c:if>
   <c:if test="${not empty trattamento.interessati}">
-    <h3 class="bordo heading pHeader">Art. 30 1c): Descrizione delle categorie di interessati</h3>
     <div class="form-custom">
+      <h3 class="bordo heading pHeader">Art. 30 1c): Descrizione delle categorie di interessati</h3>
       <ul class="list-group">
       <c:forEach var="interessati" items="${trattamento.interessati}">
         <li class="list-group-item">
@@ -212,9 +284,8 @@
     </div>
     <hr class="separatore" />
   <c:if test="${not empty trattamento.extraInfos.extraInfo3}">
-
-    <h3 class="bordo heading pHeader">Art. 30 1d): Categorie di destinatari a cui i dati vengono comunicati:</h3>
     <div class="form-custom">
+      <h3 class="bordo heading pHeader">Art. 30 1d): Categorie di destinatari a cui i dati vengono comunicati:</h3>
       <ul>
     <c:forTokens var="receiver" items="${trattamento.extraInfos.extraInfo3}" delims="-">
       <li class="list-group-item">
@@ -228,28 +299,28 @@
     </div>
     <hr class="separatore" />
   </c:if>
-    <h3 class="bordo heading pHeader">Art. 30 1f): Termini ultimi previsti per la cancellazione</h3>
     <div class="form-custom">
+      <h3 class="bordo heading pHeader">Art. 30 1f): Termini ultimi previsti per la cancellazione</h3>
       <c:out value="${trattamento.terminiUltimi}" escapeXml="false" />
     </div>
     <hr class="separatore" />
   <c:if test="${not empty trattamento.extraInfos.extraInfo1}">
-    <h3 class="bordo heading pHeader">Art. 30 1g) Descrizione generale delle misure di sicurezza tecniche ed organizzative</h3>
     <div class="form-custom">
+      <h3 class="bordo heading pHeader">Art. 30 1g) Descrizione generale delle misure di sicurezza tecniche ed organizzative</h3>
       <c:out value="${trattamento.extraInfos.extraInfo1}" escapeXml="false" />
     </div>
     <hr class="separatore" />
   </c:if>
   <c:if test="${not empty trattamento.extraInfos.extraInfo2}">
-    <h3 class="bordo heading pHeader">Luoghi di custodia dei supporti di memorizzazione</h3>
     <div class="form-custom">
+      <h3 class="bordo heading pHeader">Luoghi di custodia dei supporti di memorizzazione</h3>
       <c:out value="${trattamento.extraInfos.extraInfo2}" escapeXml="false" />
     </div>
     <hr class="separatore" />
   </c:if>
   <c:if test="${not empty trattamento.extraInfo}">
-    <h3 class="bordo heading pHeader">Ulteriori informazioni</h3>
     <div class="form-custom">
+      <h3 class="bordo heading pHeader">Ulteriori informazioni</h3>
       <c:out value="${trattamento.extraInfo}" escapeXml="false" />
     </div>
     <hr class="separatore" />
@@ -262,9 +333,7 @@
       <a href="javascript:print()" class="btn btn-warning" title="Anteprima di stampa">
         <i class="fas fa-print"></i> Stampa
        </a> 
-    </div>
-    
-    
+    </div>    
 </c:catch>
 <c:if test="${not empty exception}">
   <div class="alert alert-danger">
