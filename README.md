@@ -55,13 +55,13 @@ Applicazione web per la digitalizzazione del registro delle attivit&agrave; di t
 L'applicazione web per la digitalizzazione del registro delle attivit&agrave; di trattamento serve ad aiutare i responsabili della privacy ad individuare quali sono i database che, nel contesto delle attivit&agrave; di un'organizzazione, memorizzano dati relativi agli utenti; l'obiettivo &egrave; permettere di analizzare nel dettaglio tali database, ottenendo una serie di informazioni indicative delle tipologie di dati inseriti in ciascun database e proporre le contromisure adeguate, laddove venga evidenziata una carenza nelle misure di sicurezza attuate per proteggere i dati stessi.
 </p>
 Attraverso l'alimentazione di una base dati, l'applicazione permette di ottenere una serie di indici relativi a specifici rischi cui possono essere esposti i database organizzativi presidiati dalle strutture appartenenti all'organizzazione. 
-Oltre a rendere l'organizzazione in regola rispetto a quanto previsto dalle norme (cfr. Regolamento UE 2016/679, art. 30), ottenere e mantenere un registro digitale delle attivit&agrave; di trattamento presenta, oltre alla possibilit&agrave; di disporre di appositi strumenti di ricerca utili per consentire all'ufficio privacy di ottenere indici sintetici riguardo ai dati personali che vengono trattati dall'organizzazione, una serie ulteriore di vantaggi, tra cui:
+Ottenere e mantenere un registro digitale delle attivit&agrave; di trattamento, oltre a rendere l'organizzazione in regola rispetto a quanto previsto dalle norme (cfr. Regolamento UE 2016/679, art. 30), offre all'organizzazione stessa la possibilit&agrave; di disporre di appositi strumenti di ricerca utili per consentire all'ufficio privacy di ottenere indici sintetici riguardo ai dati personali che vengono trattati dall'organizzazione. Inoltre, disporre di uno strumento informatizzato che gestisce tale registro digitale offre una serie ulteriore di vantaggi, tra cui:
 
-* possibilit&agrave; di rigenerare il registro digitale da un anno all'altro operando poi solo per differenza rispetto all'anno precedente;
+* possibilit&agrave; di rigenerare il registro digitale da un anno all'altro operando poi per differenza rispetto all'anno precedente;
 * possibilit&agrave; di ottenere rapidamente estrazioni dati da presentare all'autorit&agrave; competente, in caso di ispezioni; 
 * possibilit&agrave; di effettuare Query analitiche sui dati trattati, che consentano di risalire alle misure di sicurezza messe in atto, e alle strutture interessate, in caso di data breach;
 
-e così via.
+Quelli elencati sopra sono soltanto alcuni dei principali aspetti positivi legati all'informatizzazione del registro delle attivit&agrave; di trattamento dati.
 
 Naturalmente, nessuno strumento informatico &egrave; in grado, da solo, di ottenere risultati come l'annullamento del danno in caso di data breach; pertanto ogni approfondimento analitico permesso dal software dovr&agrave; essere esaminato ed interpretato dai privacy specialists.
 
@@ -164,7 +164,7 @@ Distribuito nei termini della licenza GNU GPL-3.0 License. Consulta <a href="htt
 <!-- CONTACT -->
 ## Contatti
 
-Giovanroberto Torre - [@GianroTorres](https://twitter.com/GianroTorres) - gianroberto.torre@gmail.com
+Giovanroberto Torre - giovanroberto.torre@univr.eu
 
 Project Link: [https://github.com/gbetorre/privacy](https://github.com/gbetorre/privacy)
 
@@ -222,6 +222,7 @@ e fornirvi il relativo significato e la relativa motivazione.
 - [1.2.1] (22/11/2022) Mostrato in nodo albero processi numero di input e fasi
 - [1.2.0] (21/11/2022) Implementato questo file di documentazione
 -->
+- [1.0.3] (26/04/2023) Migliorata presentazione elenco TR; aggiunte info su titolare e DPO di ogni trattamento
 - [1.0.2] (17/04/2023) Miglioramenti grafici e contenutistici alla pagina dettagli trattamento dati
 - [1.0.1] (11/04/2023) Bozza pagina dettagli trattamento dati
 - [1.0.0] (27/03/2023) Initial commit
