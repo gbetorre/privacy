@@ -279,6 +279,65 @@ public interface Query extends Serializable {
             "       AND (T.id_stato = ? OR -1 = ?)" +
             "   ORDER BY I.nome";
     
+    /**
+     * Seleziona un elenco di basi giuridiche associate  
+     * ad uno specifico trattamento dati:
+     * il cui codice identificativo viene passato come parametro, 
+     * che si trova in uno stato specificato tramite parametro,
+     * e collegato ad una rilevazione avente identificativo passato come parametro.
+     */
+    public static final String GET_BASI_GIURIDICHE_TRATTAMENTO =
+            "SELECT " +
+            "       BG.id                       AS \"id\"" +
+            "   ,   BG.nome                     AS \"nome\"" +
+            "   ,   BG.descrizione              AS \"descrizione\"" +
+            "   ,   BG.ordinale                 AS \"ordinale\"" +
+            "   ,   BG.tipo_base                AS \"codice\"" +
+            "   ,   BGT.note                    AS \"informativa\"" +
+            "   FROM base_giuridica BG" +
+            "       INNER JOIN base_giuridica_trattamento BGT ON BGT.id_base_giuridica = BG.id" +
+            "       INNER JOIN trattamento T ON BGT.cod_trattamento = T.codice" +
+            "       INNER JOIN rilevazione R ON BG.id_rilevazione = R.id" +
+            "   WHERE T.codice = ?" +
+            "       AND R.id = ?" +           
+            "       AND (T.id_stato = ? OR -1 = ?)";
+    
+    /**
+     * Seleziona un elenco di banche dati associate  
+     * ad uno specifico trattamento dati
+     * il cui codice identificativo viene passato come parametro, 
+     * che si trova in uno stato specificato tramite parametro,
+     * e collegato ad una rilevazione avente identificativo passato come parametro.<br>
+     * A ciascun trattamento possono essere associate diverse banche dati;
+     * a ciascuna banca dati corrisponde un raggruppamento di:<ul>
+     * <li>un solo database</li>
+     * <li>una o pi&uacute; misure di sicurezza</li>
+     * <li>uno o pi&uacute; luoghi di custodia</li>
+     * </ul>
+     */
+    public static final String GET_BANCHE_DATI_TRATTAMENTO =
+            "SELECT " +
+            "       BD.id                       AS \"id\"" +
+            "   ,   BD.nome                     AS \"nome\"" +
+            "   ,   BD.descrizione              AS \"descrizione\"" +
+            "   ,   BD.ordinale                 AS \"ordinale\"" +
+            "   ,   DB.nome                     AS \"codice\"" +
+            "   ,   DB.descrizione              AS \"informativa\"" +
+            "   ,   DB.id_tipo_database         AS \"livello\"" +
+            "   ,   TD.nome                     AS \"tipo\"" +
+            "   ,   BD.data_ultima_modifica     AS \"dataUltimaModifica\"" +
+            "   ,   BD.ora_ultima_modifica      AS \"oraUltimaModifica\"" +
+            "   ,   BD.id_usr_ultima_modifica   AS \"autoreUltimaModifica\"" +
+            "   FROM banca_dati BD" +
+            "       INNER JOIN database DB ON BD.id_database = DB.id" +
+            "       INNER JOIN tipo_database TD ON DB.id_tipo_database = TD.id" +
+            "       INNER JOIN banca_dati_trattamento BDT ON BDT.id_banca_dati = BD.id" +
+            "       INNER JOIN trattamento T ON BDT.cod_trattamento = T.codice" +
+            "       INNER JOIN rilevazione R ON BD.id_rilevazione = R.id" +
+            "   WHERE T.codice = ?" +
+            "       AND R.id = ?" +           
+            "       AND (T.id_stato = ? OR -1 = ?)";
+    
     /* ********************************************************************** *
      *                        3. Query di inserimento                         *
      * ********************************************************************** */
