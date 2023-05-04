@@ -63,6 +63,8 @@ public class ProcessingBean extends CodeBean implements Serializable {
     private String descrizione;   
     /**     Finalit&agrave; del trattamento                                                 */
     private String finalita;
+    /**     Basi giuridiche del trattamento                                                 */
+    private ArrayList<ActivityBean> basiGiuridiche;
     /**     Termini ultimi del trattamento                                                  */
     private String terminiUltimi;
     /**     Ulteriori informazioni                                                          */
@@ -77,6 +79,8 @@ public class ProcessingBean extends CodeBean implements Serializable {
     private ArrayList<CodeBean> interessati;
     /**     Categorie di destinatari del trattamento                                        */
     private ArrayList<DepartmentBean> destinatari;
+    /**     Banche dati del trattamento                                                     */
+    private ArrayList<ProcessBean> bancheDati;
     /**     Flag di trattamento dati personali                                              */
     private boolean datiPersonali;
     /**     Flag di trattamento dati sanitari                                               */
@@ -122,9 +126,10 @@ public class ProcessingBean extends CodeBean implements Serializable {
         codice = descrizione = finalita = terminiUltimi = extraInfo = null;
         titolari = null; 
         responsabile = null;
-        attivita = null;
+        attivita = basiGiuridiche = null;
         interessati = null;
         destinatari = null;
+        bancheDati = null;
         datiPersonali = datiSanitari = datiOrientamentoSex = datiEtniaReligApp = datiMinoreEta = datiGenetici = datiBiometrici = datiGiudiziari = datiUbicazione = datiPseudonimizzati = datiAnonimizzati = false;
         dataUltimaModifica = new Date(0);
         oraUltimaModifica = null;
@@ -147,9 +152,10 @@ public class ProcessingBean extends CodeBean implements Serializable {
         codice = descrizione = finalita = terminiUltimi = extraInfo = null;
         titolari = null; 
         responsabile = null;
-        attivita = null;
+        attivita = basiGiuridiche = null;
         interessati = null;
         destinatari = null;
+        bancheDati = null;
         datiPersonali = datiSanitari = datiOrientamentoSex = datiEtniaReligApp = datiMinoreEta = datiGenetici = datiBiometrici = datiGiudiziari = datiUbicazione = datiPseudonimizzati = datiAnonimizzati = false;
         dataUltimaModifica = new Date(0);
         oraUltimaModifica = null;
@@ -201,6 +207,22 @@ public class ProcessingBean extends CodeBean implements Serializable {
      */
     public void setFinalita(String finalita) {
         this.finalita = finalita;
+    }
+
+
+    /**
+     * @return the basiGiuridiche
+     */
+    public ArrayList<ActivityBean> getBasiGiuridiche() {
+        return basiGiuridiche;
+    }
+
+
+    /**
+     * @param basiGiuridiche the basiGiuridiche to set
+     */
+    public void setBasiGiuridiche(ArrayList<ActivityBean> basiGiuridiche) {
+        this.basiGiuridiche = basiGiuridiche;
     }
 
 
@@ -312,6 +334,22 @@ public class ProcessingBean extends CodeBean implements Serializable {
      */
     public void setDestinatari(ArrayList<DepartmentBean> destinatari) {
         this.destinatari = destinatari;
+    }
+
+
+    /**
+     * @return the bancheDati
+     */
+    public ArrayList<ProcessBean> getBancheDati() {
+        return bancheDati;
+    }
+
+
+    /**
+     * @param bancheDati the bancheDati to set
+     */
+    public void setBancheDati(ArrayList<ProcessBean> bancheDati) {
+        this.bancheDati = bancheDati;
     }
 
 
