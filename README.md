@@ -222,6 +222,7 @@ e fornirvi il relativo significato e la relativa motivazione.
 - [1.2.1] (22/11/2022) Mostrato in nodo albero processi numero di input e fasi
 - [1.2.0] (21/11/2022) Implementato questo file di documentazione
 -->
+- [1.0.4] (27/04/2023) Aggiunta visualizzazione basi giuridiche, banche dati, icone
 - [1.0.3] (26/04/2023) Migliorata presentazione elenco TR; aggiunte info su titolare e DPO di ogni trattamento
 - [1.0.2] (17/04/2023) Miglioramenti grafici e contenutistici alla pagina dettagli trattamento dati
 - [1.0.1] (11/04/2023) Bozza pagina dettagli trattamento dati
