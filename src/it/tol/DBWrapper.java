@@ -51,6 +51,7 @@ import it.tol.bean.BeanUtil;
 import it.tol.bean.CodeBean;
 import it.tol.bean.ItemBean;
 import it.tol.bean.PersonBean;
+import it.tol.bean.ProcessBean;
 import it.tol.bean.ProcessingBean;
 import it.tol.exception.AttributoNonValorizzatoException;
 import it.tol.exception.WebStorageException;
@@ -737,11 +738,13 @@ public class DBWrapper implements Query, Constants {
                                   throws WebStorageException {
         try (Connection con = tol_manager.getConnection()) {
             PreparedStatement pst = null;
-            ResultSet rs, rs1, rs2, rs3 = null;
+            ResultSet rs, rs1, rs2, rs3, rs4, rs5 = null;
             int nextParam = NOTHING;
             ProcessingBean trattamento = null;
             AbstractList<ActivityBean> vAttivita = new ArrayList<>();
+            AbstractList<ActivityBean> vBasi = new ArrayList<>();
             AbstractList<CodeBean> vInteressati = new ArrayList<>();
+            AbstractList<ProcessBean> vBancheDati = new ArrayList<>();
             // TODO: Controllare se user è superuser
             try {
                 pst = con.prepareStatement(GET_TRATTAMENTO);
@@ -801,6 +804,38 @@ public class DBWrapper implements Query, Constants {
                         vInteressati.add(categoriaInteressati);
                     }
                     trattamento.setInteressati((ArrayList<CodeBean>) vInteressati);
+                    // Ha trovato il trattamento: ne cerca le basi giuridiche
+                    nextParam = NOTHING;
+                    pst = null;
+                    pst = con.prepareStatement(GET_BASI_GIURIDICHE_TRATTAMENTO);
+                    pst.clearParameters();
+                    pst.setString(++nextParam, idTrattamento);
+                    pst.setInt(++nextParam, survey.getId());
+                    pst.setInt(++nextParam, stato.getCod1());
+                    pst.setInt(++nextParam, stato.getCod2());
+                    rs4 = pst.executeQuery();
+                    while (rs4.next()) {
+                        ActivityBean baseGiuridica = new ActivityBean();
+                        BeanUtil.populate(baseGiuridica, rs4);
+                        vBasi.add(baseGiuridica);
+                    }
+                    trattamento.setBasiGiuridiche((ArrayList<ActivityBean>) vBasi);
+                    // Ha trovato il trattamento: ne cerca le banche dati
+                    nextParam = NOTHING;
+                    pst = null;
+                    pst = con.prepareStatement(GET_BANCHE_DATI_TRATTAMENTO);
+                    pst.clearParameters();
+                    pst.setString(++nextParam, idTrattamento);
+                    pst.setInt(++nextParam, survey.getId());
+                    pst.setInt(++nextParam, stato.getCod1());
+                    pst.setInt(++nextParam, stato.getCod2());
+                    rs5 = pst.executeQuery();
+                    while (rs5.next()) {
+                        ProcessBean bancadati = new ProcessBean();
+                        BeanUtil.populate(bancadati, rs5);
+                        vBancheDati.add(bancadati);
+                    }
+                    trattamento.setBancheDati((ArrayList<ProcessBean>) vBancheDati);
                 }
                 // Just tries to engage the Garbage Collector
                 pst = null;
