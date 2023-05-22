@@ -51,6 +51,8 @@ Applicazione web per la digitalizzazione del registro delle attivit&agrave; di t
 ## About The Project
 
 [![Product Name Screen Shot][product-screenshot]](https://github.com/gbetorre/privacy/blob/main/web/img/product-screenshot.png)
+
+[![Product Name Screen Shot][product-screenshot2]](https://github.com/gbetorre/privacy/blob/main/web/img/product-screenshot2.png)
 <p>
 L'applicazione web per la digitalizzazione del registro delle attivit&agrave; di trattamento serve ad aiutare i responsabili della privacy ad individuare quali sono i database che, nel contesto delle attivit&agrave; di un'organizzazione, memorizzano dati relativi agli utenti; l'obiettivo &egrave; permettere di analizzare nel dettaglio tali database, ottenendo una serie di informazioni indicative delle tipologie di dati inseriti in ciascun database e proporre le contromisure adeguate, laddove venga evidenziata una carenza nelle misure di sicurezza attuate per proteggere i dati stessi.
 </p>
@@ -222,6 +224,7 @@ e fornirvi il relativo significato e la relativa motivazione.
 - [1.2.1] (22/11/2022) Mostrato in nodo albero processi numero di input e fasi
 - [1.2.0] (21/11/2022) Implementato questo file di documentazione
 -->
+- [1.0.5] (22/05/2023) Aggiunta possibilità di esportare elenco trattamenti o dettaglio singolo trattamento in formato PDF
 - [1.0.4] (27/04/2023) Aggiunta visualizzazione basi giuridiche, banche dati, icone
 - [1.0.3] (26/04/2023) Migliorata presentazione elenco TR; aggiunte info su titolare e DPO di ogni trattamento
 - [1.0.2] (17/04/2023) Miglioramenti grafici e contenutistici alla pagina dettagli trattamento dati
@@ -251,13 +254,13 @@ Vedi anche [open issues](https://github.com/gbetorre/privacy/issues) per una lis
 [contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
 [product-screenshot]: https://github.com/gbetorre/privacy/blob/main/web/img/product-screenshot.png
+[product-screenshot2]: https://github.com/gbetorre/privacy/blob/main/web/img/product-screenshot2.png
 [issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
 [issues-url]: https://github.com/othneildrew/Best-README-Template/issues
 [license-shield]: https://img.shields.io/badge/license-GPL-blue
 [license-url]: https://github.com/gbetorre/privacy/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/othneildrew
-[product-screenshot]: images/screenshot.png
 [Java]: https://img.shields.io/badge/linguaggio-java-red
 [Java-url]: https://www.java.com/it/
 [JavaScript]: https://img.shields.io/badge/linguaggio-javascript-green
