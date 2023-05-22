@@ -36,8 +36,8 @@ import java.sql.Time;
 import java.util.AbstractList;
 import java.util.Date;
 
-import it.tol.Constants;
 import it.tol.exception.AttributoNonValorizzatoException;
+import it.tol.interfaces.Constants;
 
 /**
  * <p>Classe usata per rappresentare un processo/macroprocesso.</p>
