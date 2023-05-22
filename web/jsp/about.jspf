@@ -19,16 +19,16 @@
         </button>
       </div>
       <div class="toast-body">
-        Versione: 1.04
+        Versione: 1.05
         <fmt:setLocale value="it_IT"/>
-        <c:set var="deployDate" value="27-04-2023" scope="page" />
+        <c:set var="deployDate" value="22-05-2023" scope="page" />
         <fmt:parseDate var="releaseDate" value="${deployDate}" pattern="dd-MM-yyyy" scope="page" />
         <fmt:formatDate var="dataRilascio" value="${releaseDate}" pattern="dd MMMMM, yyyy" />
         <span class="float-right">
           <em>(data di rilascio: <c:out value="${dataRilascio}" />)</em>
         </span>
         <hr class="riga" />
-          &copy; 2022 &mdash; <c:out value="${requestScope.theCurrentYear}" />&nbsp;<%-- 
+          &copy; 2023&nbsp;<%--  &mdash; <c:out value="${requestScope.theCurrentYear}" />
           &nbsp;&nbsp;Universit&agrave; degli studi di Verona&nbsp;<br />&nbsp;
           &nbsp;Via dell'Artigliere 8, 37129 Verona &nbsp;<br />&nbsp; 
           &nbsp;Partita IVA IT01541040232 &nbsp;<br />&nbsp; 
@@ -40,7 +40,7 @@
   <script type="text/javascript">
     $(document).ready(function(){
         $('#about').toast('show');
-        $('#popupTitle').addClass('bgAct' + pickOne());
+        $('#popupTitle').addClass('bgAct15');
     });
   </script>
   <script type="text/javascript">
