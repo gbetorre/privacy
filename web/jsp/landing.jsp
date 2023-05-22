@@ -10,7 +10,7 @@
             <div class="card bg-primary text-white mb-4">
               <div class="card-body">Trattamenti</div>
               <div class="card-footer d-flex align-items-center justify-content-between">
-                <a class="small text-white stretched-link" href="${tr}">Vedi elenco</a>
+                <a class="small stretched-link" href="${tr}">Vedi elenco</a>
                 <div class="small text-white"><i class="fas fa-angle-right"></i></div>
               </div>
             </div>
