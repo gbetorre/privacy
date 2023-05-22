@@ -30,7 +30,7 @@
  *   37129 Verona (Italy)
  */
 
-package it.tol;
+package it.tol.interfaces;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -103,6 +103,14 @@ public interface Constants extends Serializable {
      * vale GET_ALL_BY_CLAUSE.</p>
      */
     public static final int GET_ALL_BY_CLAUSE = -1;
+    /**
+     * <p>Costante parlante per ottenere elementi in stato attivo.</p>
+     */
+    public static final int STATE_ACTIVE = 1;
+    /**
+     * <p>Costante parlante per ottenere elementi in stato dismesso.</p>
+     */
+    public static final int STATE_INACTIVE = 3;
     /**
      * <p>Valore identificante la tabella contenente una struttura o un processo 
      * di primo livello (p.es. 1 = struttura_liv1 | 1 = macroprocesso_at)</p>
@@ -254,7 +262,7 @@ public interface Constants extends Serializable {
      */
     public static final char BLANK_SPACE = ' ';
     /**
-     * Costante per l'uso del separatore trattino
+     * Costante per l'uso del separatore trattino corto, o standard
      */
     public static final char HYPHEN = '-';
     /**
@@ -310,11 +318,11 @@ public interface Constants extends Serializable {
     /**
      * <p>Costante da utilizzare quando serve un valore per inizializzazione
      * di default di un parametro mancante sulla querystring.</p>
-     * <p>Incapsula il classico trattino (-) che viene utilizzato come default
+     * <p>Incapsula il trattino lungo (—), o dash, che viene utilizzato come default
      * per i valori mancanti di parametri richiesti tipicamente dalle
      * Command.</p>
      */
-    public static final String DASH = String.valueOf(HYPHEN);
+    public static final String DASH = "—";
     /**
      * Costante per l'uso del separatore semicolon 
      */
@@ -336,7 +344,7 @@ public interface Constants extends Serializable {
      */
     public static final String AMPERSAND = "&";
     /* ************************************************************************ *
-     * Formati di files, naming di files, tipi MIME etc.
+     * Formati di files, politiche di naming, prefissi di files, tipi MIME etc.
      * ************************************************************************ */
     /**
      * Costante per il tipo MIME html
@@ -346,10 +354,22 @@ public interface Constants extends Serializable {
      * Costante per il tipo MIME testo semplice
      */
     public static final String MIME_TYPE_TEXT = "text/plain";
+    /** 
+     * Costante per il tipo MIME csv
+     */
+    public static final String MIME_TYPE_CSV = "text/x-comma-separated-values";
+    /**
+     * Costante per il tipo MIME pdf
+     */
+    public static final String MIME_TYPE_PDF = "application/pdf";
     /**
      * Costante per il formato di file "Comma Separated Values"
      */
     public static final String CSV = "csv";
+    /**
+     * Costante per il formato di file "Portable Document Format"
+     */
+    public static final String PDF = "pdf";
     /**
      * Costante per il formato di file "JavaScript Object Notation"
      */
@@ -367,17 +387,17 @@ public interface Constants extends Serializable {
      */
     public static final String PRO_PFX = "procat_l";
     /**
-     * Costante per i nomi di estrazioni dati interviste
+     * Costante per i nomi di file relativi a trattamenti
      */
-    public static final String INTERVIEWS = "interviste";
+    public static final String TREATMENTS = "registroTR";
     /**
-     * Costante per i nomi di estrazioni dati intervista
+     * Costante per i trattamenti di tipo titolare
      */
-    public static final String INTERVIEW = "intervista";
+    public static final String TITOLARE = "-T";
     /**
-     * Costante per i nomi di estrazioni dati strutture
+     * Costante per i trattamenti di tipo responsabile
      */
-    public static final String STRUCTURES = "organigramma";
+    public static final String RESPONSABILE = "-R";
     /**
      * Costante per i nomi di estrazioni dati processi anticorruzione
      */
