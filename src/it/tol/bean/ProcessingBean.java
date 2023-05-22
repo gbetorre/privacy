@@ -166,8 +166,12 @@ public class ProcessingBean extends CodeBean implements Serializable {
 
     /**
      * @return the codice
+     * @throws it.tol.exception.AttributoNonValorizzatoException  eccezione che viene sollevata se questo oggetto viene usato e codice non &egrave; stato valorizzato (&egrave; un dato obbligatorio)
      */
-    public String getCodice() {
+    public String getCodice() throws AttributoNonValorizzatoException {
+        if (codice == null) {
+            throw new AttributoNonValorizzatoException("Attributo codice non valorizzato!");
+        }
         return codice;
     }
 
