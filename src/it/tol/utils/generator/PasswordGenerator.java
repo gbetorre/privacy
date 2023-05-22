@@ -30,11 +30,13 @@
  *   37129 Verona (Italy)
  */
 
-package it.tol;
+package it.tol.utils.generator;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import it.tol.interfaces.Constants;
 
 
 /**

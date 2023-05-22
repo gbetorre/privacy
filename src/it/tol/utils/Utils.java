@@ -30,7 +30,7 @@
  *   37129 Verona (Italy)
  */
 
-package it.tol;
+package it.tol.utils;
 
 import java.sql.Time;
 import java.text.DateFormat;
@@ -46,6 +46,8 @@ import java.util.logging.Logger;
 
 import it.tol.exception.CommandException;
 import it.tol.exception.NotFoundException;
+import it.tol.interfaces.Constants;
+import it.tol.wrapper.DBWrapper;
 
 
 /**

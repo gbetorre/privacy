@@ -30,7 +30,7 @@
  *   37129 Verona (Italy)
  */
 
-package it.tol;
+package it.tol.wrapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -46,6 +46,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import it.tol.ConfigManager;
 import it.tol.bean.ActivityBean;
 import it.tol.bean.BeanUtil;
 import it.tol.bean.CodeBean;
@@ -55,6 +56,9 @@ import it.tol.bean.ProcessBean;
 import it.tol.bean.ProcessingBean;
 import it.tol.exception.AttributoNonValorizzatoException;
 import it.tol.exception.WebStorageException;
+import it.tol.interfaces.Constants;
+import it.tol.interfaces.Query;
+import it.tol.utils.Utils;
 
 
 /**

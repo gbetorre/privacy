@@ -30,7 +30,7 @@
  *   37129 Verona (Italy)
  */
 
-package it.tol;
+package it.tol.interfaces;
 
 import java.io.Serializable;
 
