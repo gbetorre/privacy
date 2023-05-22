@@ -47,6 +47,8 @@ import it.tol.bean.CodeBean;
 import it.tol.bean.ItemBean;
 import it.tol.command.Command;
 import it.tol.exception.WebStorageException;
+import it.tol.interfaces.Constants;
+import it.tol.wrapper.DBWrapper;
 
 
 /**
@@ -199,9 +201,17 @@ public class ConfigManager extends HttpServlet {
      */
     private static String dirJson = "json";
     /**
+     * <p>Stringa per il puntamento al percorso di produzione</p>
+     */
+    private static String realPath = new String("/var/lib/tomcat9/webapps/privacy/");
+    /**
      * <p>Stringa per il puntamento al db di produzione</p>
      */
     private static StringBuffer contextDbName = new StringBuffer("java:comp/env/jdbc/tol");
+    /**
+     * <p>Stringa per il puntamento a elemento grafico logo in produzione</p>
+     */
+    private static StringBuffer dirImages = new StringBuffer(realPath).append("web/img/");
 
 
     /**
@@ -279,7 +289,7 @@ public class ConfigManager extends HttpServlet {
         log.info("==>" + getServletContext().getRealPath("/") + "<==");
         // Prima deve capire su quale database deve insistere
         // Di default va in produzione, ma se non siamo in produzione deve andare in locale
-        if ( !getServletContext().getRealPath("/").equals("/var/lib/tomcat9/webapps/privacy/") ) {
+        if ( !getServletContext().getRealPath("/").equals(realPath) ) {
             contextDbName = new StringBuffer("java:comp/env/jdbc/toldev");
         }
         try {
@@ -359,17 +369,11 @@ public class ConfigManager extends HttpServlet {
             throw new ServletException(FOR_NAME + "Problemi nel caricare la struttura contenente le rilevazioni.\n" + e.getMessage(), e);
         }
         /*
-         * Carica una struttura dati, che esporra' staticamente, contenente tutte 
-         * le etichette utilizzabili nella costruzione dei nomi dei files 
-         * generati dall'applicazione in funzione del valore del parametro p.
+         * Ottiene il percorso del logo (di default va in produzione, ma se non siamo in produzione deve andare in locale)
          */
-        labels = null;
-        // La istanzia
-        labels = new ConcurrentHashMap<>();
-        // La carica
-        labels.put(Constants.PART_SELECT_QSS, Constants.INTERVIEWS);
-        labels.put(Constants.PART_RESUME_QST, Constants.INTERVIEW);
-        labels.put(Constants.COMMAND_STRUCTURES, Constants.STRUCTURES);
+        if ( !getServletContext().getRealPath("/").equals(realPath) ) {
+            dirImages = new StringBuffer("C:\\Programs\\apache-tomcat-8.5.31\\webapps\\privacy\\web\\img\\");
+        }
     }
 
 
@@ -591,6 +595,17 @@ public class ConfigManager extends HttpServlet {
      */
     public static ConcurrentHashMap<String, String> getLabels() {
         return labels;
+    }
+    
+    
+    /**
+     * <p>Restituisce il percorso dove si trovano i file delle immagini.</p>
+     * <p>Metodo getter sulla variabile privata di classe.</p>
+     *
+     * @return <code>String</code> - il percorso fisico delle immagini dell'applicazione
+     */
+    public static String getDirImages() {
+        return new String(dirImages);
     }
     
 }
