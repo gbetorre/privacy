@@ -32,38 +32,37 @@
 
 package it.tol;
 
-import java.awt.Color;
+import java.awt.print.PageFormat;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Time;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.oreilly.servlet.ParameterParser;
+import com.qoppa.pdfWriter.PDFDocument;
 
-import it.tol.bean.ActivityBean;
-import it.tol.bean.DepartmentBean;
-import it.tol.bean.ItemBean;
 import it.tol.bean.PersonBean;
-import it.tol.bean.ProcessBean;
-import it.tol.command.DepartmentCommand;
+import it.tol.bean.ProcessingBean;
 import it.tol.command.RegisterCommand;
 import it.tol.exception.AttributoNonValorizzatoException;
 import it.tol.exception.CommandException;
+import it.tol.interfaces.Constants;
+import it.tol.utils.generator.DocumentGenerator;
+import it.tol.wrapper.DBWrapper;
+import it.tol.wrapper.DocWrapper;
 
 
 /**
@@ -152,10 +151,6 @@ public class Data extends HttpServlet implements Constants {
      * Parametro della query string per richiedere un certo formato di output.
      */
     private String format;
-    /**
-     * Pagina a cui la command reindirizza per mostrare i processi nel contesto di una struttura
-     */
-    //private static final String nomeFileProcessiStruttureAjax = "/jsp/stElencoAjax.jsp";
 
 
     /**
@@ -190,31 +185,39 @@ public class Data extends HttpServlet implements Constants {
         qToken = req.getParameter(ConfigManager.getEntToken());
         // Recupera il formato dell'output, se specificato
         format = req.getParameter(ConfigManager.getOutToken());
-        // Recupera o inizializza parametro per identificare la pagina
-        String part = req.getParameter("p");
         // Struttura da restituire in Request
-        AbstractList<?> lista = null;
+        AbstractList<?> list = null;
         // Message
         log.info("===> Log su servlet Data. <===");
         // Decodifica la richiesta
-
-        /*
-         * Forworda la richiesta, esito finale di tutto
-         */
+        try {
+            // Verifica se deve servire un output PDF
+            if (format != null && !format.isEmpty() && format.equalsIgnoreCase(PDF)) {
+                // Recupero elementi in base alla richiesta
+                list = retrieve(req, qToken);
+                // Passaggio in request per uso delle lista
+                req.setAttribute("lista", list);
+                // Genera il file PDF
+                generatePDF(req, res);
+                // Ha finito
+                return;
+            }
+        } catch (CommandException ce) {
+            throw new ServletException(FOR_NAME + "Problema nel service di Data.\n" + ce.getMessage(), ce);
+        }
+        // Forworda la richiesta, se è questo il caso
         RequestDispatcher dispatcher = servletContext.getRequestDispatcher(fileJsp);
         dispatcher.forward(req, res);
     }
 
 
     /**
-     * <p>Restituisce un elenco generico di elementi 
-     * (interviste, macroprocessi, strutture...)
-     * relativi a una richiesta specifica.</p>
+     * <p>Restituisce un elenco generico di elementi relativi a una richiesta specifica.</p>
      *
      * @param req HttpServletRequest contenente i parametri per contestualizzare l'estrazione
      * @param qToken il token della commmand in base al quale bisogna preparare la lista di elementi
      * @return <code>ArrayList&lt;?&gt; - lista contenente gli elementi trovati
-     * @throws CommandException se si verifica un problema nella WebStorage (DBWrapper), nella Command interpellata, o in qualche puntamento
+     * @throws CommandException se si verifica un problema nel recupero dei dati o in qualche puntamento
      */
     private static ArrayList<?> retrieve(HttpServletRequest req,
                                          String qToken)
@@ -223,10 +226,10 @@ public class Data extends HttpServlet implements Constants {
         ArrayList<?> list = null;
         // Ottiene i parametri della richiesta
         ParameterParser parser = new ParameterParser(req);
-        // Recupera o inizializza parametro per identificare la pagina
-        String part = parser.getStringParameter("p", VOID_STRING);
+        // Recupera o inizializza parametro per identificare il trattamento 
+        String codeT = parser.getStringParameter("idT", VOID_STRING);
         // Recupera o inizializza parametro per identificare la rilevazione
-        String codeSurvey = parser.getStringParameter("r", VOID_STRING);
+        String codeSur = parser.getStringParameter("r", VOID_STRING);
         // Recupera la sessione creata e valorizzata per riferimento nella req dal metodo authenticate
         HttpSession ses = req.getSession(IF_EXISTS_DONOT_CREATE_NEW);
         PersonBean user = (PersonBean) ses.getAttribute("usr");
@@ -235,9 +238,18 @@ public class Data extends HttpServlet implements Constants {
         }
         // Gestisce la richiesta
         try {
+            ArrayList<ProcessingBean> vT = new ArrayList<>();
             // Istanzia nuovo Databound
             DBWrapper db = new DBWrapper();
-
+            // Recupera il trattamento dati            
+            if (!codeT.equals(VOID_STRING)) {
+                ProcessingBean t = RegisterCommand.retrieve(user, codeT, STATE_ACTIVE, ConfigManager.getSurvey(codeSur), db);
+                vT.add(t);
+            // Recupera tutti i trattamenti
+            } else {
+                vT = RegisterCommand.retrieve(user, STATE_ACTIVE, ConfigManager.getSurvey(codeSur), db);
+            }
+            list = vT;
         } catch (Exception e) {
             String msg = FOR_NAME + "Si e\' verificato un problema.\n" + e.getLocalizedMessage();
             log.severe(msg);
@@ -288,6 +300,72 @@ public class Data extends HttpServlet implements Constants {
         }
         return list;
     }
+
+
+    /**
+     * <p>Genera un nome univoco a partire da un prefisso dato come parametro.</p>
+     *
+     * @param label il prefisso che costituira' una parte del nome del file generato
+     * @return <code>String</code> - il nome univoco generato
+     */
+    private static String makeFilename(String label) {
+        // Crea un nome univoco per il file che andrà ad essere generato
+        Calendar now = Calendar.getInstance();
+        String fileName = label + UNDERSCORE +
+                          new Integer(now.get(Calendar.YEAR)).toString() + HYPHEN +
+                          String.format("%02d", new Integer(now.get(Calendar.MONTH) + 1)) + HYPHEN +
+                          String.format("%02d", new Integer(now.get(Calendar.DAY_OF_MONTH))) + UNDERSCORE +
+                          String.format("%02d", new Integer(now.get(Calendar.HOUR_OF_DAY))) +
+                          String.format("%02d", new Integer(now.get(Calendar.MINUTE))) +
+                          String.format("%02d", new Integer(now.get(Calendar.SECOND)));
+        return fileName;
+    }
+    
+    
+    private void generatePDF (HttpServletRequest req, HttpServletResponse res) 
+                       throws IOException, ServletException {
+        if (req.getParameter(ConfigManager.getEntToken()).equalsIgnoreCase(COMMAND_REGISTER)) {
+            try {
+                // Recupera lista di trattamenti da stampare
+                ArrayList<ProcessingBean> list = (ArrayList<ProcessingBean>) req.getAttribute("lista");
+                // Genera un nome univoco per il file che verrà servito
+                String label = null;
+                // O è presente un solo trattamento
+                if (list.size() == ELEMENT_LEV_1) {
+                    label = list.get(MAIN_MENU).getCodice();
+                // O è presente una lista di trattamenti
+                } else if (list.size() > ELEMENT_LEV_1) {
+                    label = Constants.TREATMENTS;
+                // La terza situazione è un errore
+                } else {
+                    String msg = FOR_NAME + "La Servlet Data non ha trovato trattamenti.\n";
+                    log.severe(msg);
+                    throw new IOException(msg);
+                }
+                String fileName = makeFilename(label);
+                // Configura il response per il browser
+                res.setContentType(MIME_TYPE_PDF);
+                // Configura il characterEncoding
+                res.setCharacterEncoding("UTF-8");
+                // Configura l'header
+                res.setHeader("Content-Disposition","attachment;filename=" + fileName + DOT + PDF);
+                // Stampa il file sullo standard output
+                pdfPrintf(req, res);
+            } catch (AttributoNonValorizzatoException anve) {
+                String msg = FOR_NAME + "Si e\' verificato un problema nel recupero di attributi obbligatori contestualmente alla generazione del pdf.\n" + anve.getMessage();
+                log.severe(msg);
+                throw new IOException(msg);
+            } catch (Exception e) {
+                String msg = FOR_NAME + "Problema in un generatePDF di Data" + e.getMessage();
+                log.severe(msg);
+                throw new ServletException(msg);
+            }
+        } else {
+            String msg = FOR_NAME + "La Servlet Data non accetta la stringa passata come valore di 'ent': " + req.getParameter(ConfigManager.getEntToken());
+            log.severe(msg + "Tentativo di indirizzare alla Servlet Data una richiesta non gestita. Hacking test?\n");
+            throw new IOException(msg);
+        }
+    }
     
 
     /**
@@ -323,41 +401,21 @@ public class Data extends HttpServlet implements Constants {
      * @throws ServletException eccezione eventualmente proveniente dalla fprinf, da propagare
      * @throws IOException  eccezione eventualmente proveniente dalla fprinf, da propagare
      */
-    private static void makeCSV(HttpServletRequest req, HttpServletResponse res, String qToken)
-                         throws ServletException, IOException {
+    private static void generateCSV(HttpServletRequest req, HttpServletResponse res, String qToken)
+                             throws ServletException, IOException {
         // Genera un nome univoco per il file che verrà servito
         String fileName = makeFilename(qToken);
         // Configura il response per il browser
-        res.setContentType("text/x-comma-separated-values");
-        // Configura il characterEncoding (v. commento)
-        res.setCharacterEncoding("ISO-8859-1");
+        res.setContentType(MIME_TYPE_CSV);
+        // Configura il characterEncoding
+        res.setCharacterEncoding("UTF-8");
         // Configura l'header
         res.setHeader("Content-Disposition","attachment;filename=" + fileName + DOT + CSV);
         // Stampa il file sullo standard output
-        fprintf(req, res);
+        csvPrintf(req, res);
     }
-
-
-    /**
-     * <p>Genera un nome univoco a partire da un prefisso dato come parametro.</p>
-     *
-     * @param label il prefisso che costituira' una parte del nome del file generato
-     * @return <code>String</code> - il nome univoco generato
-     */
-    private static String makeFilename(String label) {
-        // Crea un nome univoco per il file che andrà ad essere generato
-        Calendar now = Calendar.getInstance();
-        String fileName = ConfigManager.getLabels().get(label) + UNDERSCORE +
-                          new Integer(now.get(Calendar.YEAR)).toString() + HYPHEN +
-                          String.format("%02d", new Integer(now.get(Calendar.MONTH) + 1)) + HYPHEN +
-                          String.format("%02d", new Integer(now.get(Calendar.DAY_OF_MONTH))) + UNDERSCORE +
-                          String.format("%02d", new Integer(now.get(Calendar.HOUR_OF_DAY))) +
-                          String.format("%02d", new Integer(now.get(Calendar.MINUTE))) +
-                          String.format("%02d", new Integer(now.get(Calendar.SECOND)));
-        return fileName;
-    }
-
-
+    
+    
     /**
      * <p>Genera il contenuto dello stream, che questa classe tratta
      * sotto forma di file, che viene trasmesso sulla risposta in output,
@@ -382,6 +440,71 @@ public class Data extends HttpServlet implements Constants {
      *
      * @param req la HttpServletRequest contenente il valore di 'ent' e gli altri parametri necessari a formattare opportunamente l'output
      * @param res la HttpServletResponse utilizzata per ottenere il 'Writer' su cui stampare il contenuto, cioe' il file stesso
+     * @throws ServletException   java.lang.Throwable.Exception.ServletException che viene sollevata se manca un parametro di configurazione considerato obbligatorio o per via di qualche altro problema di puntamento
+     * @throws IOException        java.io.IOException che viene sollevata se si verifica un puntamento a null o in genere nei casi in cui nella gestione del flusso informativo di questo metodo si verifica un problema
+     */
+    @SuppressWarnings("unchecked")
+    private static void pdfPrintf(HttpServletRequest req, HttpServletResponse res)
+                           throws ServletException, IOException {
+        // Genera l'oggetto per il servlet output stream
+        ServletOutputStream out = res.getOutputStream();
+        // Recupera lista di trattamenti da stampare
+        ArrayList<ProcessingBean> list = (ArrayList<ProcessingBean>) req.getAttribute("lista");
+        /* **************************************************************** *
+         *     Gestione elaborazione contenuto PDF per trattamenti dati     *
+         * **************************************************************** */
+        if (req.getParameter(ConfigManager.getEntToken()).equalsIgnoreCase(COMMAND_REGISTER)) {
+            try {
+                // Genera il documento PDF
+                PDFDocument pdfDoc = DocumentGenerator.getPDFDocument();
+                // Ottiene il formato della pagina
+                PageFormat pf = DocumentGenerator.getPageFormat();
+                // Se sta stampando il registro bisogna aggiungere le intestazioni
+                if (list.size() > ELEMENT_LEV_1) {
+                    // 0. Frontespizio
+                    DocWrapper.makeFrontPage(pf, pdfDoc);
+                }
+                // 1. Ambito di applicazione
+                DocWrapper.makeFirstPage(pf, pdfDoc);
+                // 2. Dati di Contatto
+                DocWrapper.makeSecondPage(pf, pdfDoc);
+                // Dettagli trattamento/i
+                DocWrapper.makeDetailPages(pf, pdfDoc, list);
+                // Save the document to the servlet output stream. This goes directly to the browser
+                pdfDoc.saveDocument(out);
+    
+            } catch (Exception e) {
+                log.severe(FOR_NAME + "Problema in un fprintf di Data" + e.getMessage());
+                out.println(e.getMessage());
+            }
+        } else {
+            String msg = FOR_NAME + "La Servlet Data non accetta la stringa passata come valore di 'ent': " + req.getParameter(ConfigManager.getEntToken());
+            log.severe(msg + "Tentativo di indirizzare alla Servlet Data una richiesta non gestita. Hacking test?\n");
+            throw new IOException(msg);
+        }
+        // Close the server output stream
+        out.close();
+    }
+    
+    
+    /**
+     * <p>Genera il contenuto dello stream, che questa classe tratta
+     * sotto forma di file, che viene trasmesso sulla risposta in output,
+     * a seconda del valore di <code>'q'</code> che riceve in input.</p>
+     * <p>
+     * Storicamente, in programmazione <code> C, C++ </code> e affini,
+     * le funzioni che scrivono sull'outputstream si chiamano tutte
+     * <code>printf</code>, precedute da vari prefissi a seconda di
+     * quello che scrivono e di dove lo scrivono.<br />
+     * <code>fprintf</code> &egrave; la funzione della libreria C che
+     * invia output formattati allo stream, identificato con un puntatore
+     * a un oggetto FILE passato come argomento
+     * (<small>per approfondire,
+     * <a href="http://www.tutorialspoint.com/c_standard_library/c_function_fprintf.htm">
+     * v. p.es. qui</a></small>).<br />
+     *
+     * @param req la HttpServletRequest contenente il valore di 'ent' e gli altri parametri necessari a formattare opportunamente l'output
+     * @param res la HttpServletResponse utilizzata per ottenere il 'Writer' su cui stampare il contenuto, cioe' il file stesso
      * @return <code>int</code> - un valore intero restituito per motivi storici.
      *                            Tradizionalmente, tutte le funzioni della famiglia x-printf restituiscono un intero,
      *                            che vale il numero dei caratteri scritti - qui il numero delle righe scritte - in caso di successo
@@ -390,8 +513,8 @@ public class Data extends HttpServlet implements Constants {
      * @throws IOException        java.io.IOException che viene sollevata se si verifica un puntamento a null o in genere nei casi in cui nella gestione del flusso informativo di questo metodo si verifica un problema
      */
     @SuppressWarnings("unchecked")
-    private static int fprintf(HttpServletRequest req, HttpServletResponse res)
-                        throws ServletException, IOException {
+    private static int csvPrintf(HttpServletRequest req, HttpServletResponse res)
+                          throws ServletException, IOException {
         // Genera l'oggetto per lo standard output
         PrintWriter out = res.getWriter();
         // Tradizionalmente, ogni funzione della famiglia x-printf restituisce un intero
@@ -415,95 +538,5 @@ public class Data extends HttpServlet implements Constants {
         }
         return success;
     }
-
     
-    /**
-     * <p>Genera il nodo JSON</p>
-     *
-     * @param tipo          valore che serve a differenziare tra tipi diversi di nodi per poter applicare formattazioni o attributi diversi
-     * @param codice        codice del nodo corrente
-     * @param codicePadre   codice del nodo padre del nodo corrente
-     * @param nome          etichetta del nodo
-     * @param descr         descrizione del nodo
-     * @param lbl1          label aggiuntiva
-     * @param txt1          testo relativo alla label
-     * @param lbl2          label aggiuntiva
-     * @param txt2          testo relativo alla label
-     * @param bgColor       parametro opzionale specificante il colore dei box/nodi in formato esadecimale
-     * @param icona         parametro opzionale specificante il nome del file da mostrare come stereotipo
-     * @param livello       livello gerarchico del nodo
-     * @return <code>String</code> - il nodo in formato String
-     */
-    public static String getStructureJsonNode(String tipo,
-                                              String codice,
-                                              String codicePadre,
-                                              String nome,
-                                              String descr,
-                                              String lbl1,
-                                              String txt1,
-                                              String lbl2,
-                                              String txt2,
-                                              String bgColor,
-                                              String icona,
-                                              int livello) {
-        /* ------------------------ *
-         *   Controlli sull'input   *
-         * ------------------------ */
-        String codiceGest = (codicePadre == null ? "null" : "\"" + codicePadre + "\"");
-        String nodeImage = (icona == null ? "logo2.gif" : icona + livello + ".png");
-        String height =  (descr.length() > 100) ? String.valueOf(descr.length()) : String.valueOf(146);
-        Color backgroundColor = null;
-        if (bgColor != null && !bgColor.equals(VOID_STRING)) {
-            backgroundColor = Color.decode(bgColor);
-        } else {
-            backgroundColor = new Color(51,182,208);
-        }
-        /* ------------------------ */
-        // Generazione nodo
-        return "{\"nodeId\":\"" + codice + "\"," +
-                "  \"parentNodeId\":" + codiceGest + "," +
-                "  \"width\":342," +
-                "  \"height\":" + height +"," +
-                "  \"borderWidth\":1," +
-                "  \"borderRadius\":5," +
-                "  \"borderColor\":{\"red\":15,\"green\":140,\"blue\":121,\"alpha\":1}," +
-                "  \"backgroundColor\":{\"red\":" + backgroundColor.getRed() + ",\"green\":" + backgroundColor.getGreen() + ",\"blue\":" + backgroundColor.getBlue() + ",\"alpha\":1}," +
-                "  \"nodeImage\":{\"url\":\"web/img/" + nodeImage + "\",\"width\":50,\"height\":50,\"centerTopDistance\":0,\"centerLeftDistance\":0,\"cornerShape\":\"CIRCLE\",\"shadow\":false,\"borderWidth\":0,\"borderColor\":{\"red\":19,\"green\":123,\"blue\":128,\"alpha\":1}}," +
-                "  \"nodeIcon\":{\"icon\":\"\",\"size\":30}," +
-                "  \"template\":\"<div>\\n <div style=\\\"margin-left:15px;\\n margin-right:15px;\\n text-align: center;\\n margin-top:10px;\\n font-size:20px;\\n font-weight:bold;\\n \\\">" + nome + "</div>\\n <div style=\\\"margin-left:80px;\\n margin-right:15px;\\n margin-top:3px;\\n font-size:16px;\\n \\\">" + descr + "</div>\\n\\n <div style=\\\"margin-left:270px;\\n  margin-top:15px;\\n  font-size:13px;\\n  position:absolute;\\n  bottom:5px;\\n \\\">\\n<div>" + lbl1 + " " + txt1 +"</div>\\n<div style=\\\"margin-top:5px\\\">" + lbl2 + " " + txt2 + "</div>\\n</div>     </div>\"," +
-                "  \"connectorLineColor\":{\"red\":220,\"green\":189,\"blue\":207,\"alpha\":1}," +
-                "  \"connectorLineWidth\":5," +
-              //"  \"dashArray\":\"\"," +
-                "  \"expanded\":false }";
-    }
-    
-    
-    /**
-     * <p>Genera la descrizione del nodo JSON</p>
-     *
-     * @param list          struttura vettoriale contenente informazioni
-     * @param livello       livello gerarchico del nodo
-     * @return <code>String</code> - il nodo in formato String
-     * @throws AttributoNonValorizzatoException eccezione che viene propagata se si tenta di accedere a un dato obbligatorio non valorizzato del bean
-     */
-    public static String makeDescrJsonNode(ArrayList<?> list,
-                                           int livello) 
-                                    throws AttributoNonValorizzatoException {
-        StringBuffer descr = new StringBuffer();
-        descr.append("<ul>");
-        for (int i = 0; i < list.size(); i++) {
-            PersonBean p = (PersonBean) list.get(i);
-            descr.append("<li>");
-            descr.append(p.getNome());
-            descr.append(BLANK_SPACE);
-            descr.append(p.getCognome());
-            descr.append(BLANK_SPACE + DASH + BLANK_SPACE);
-            descr.append(p.getNote());
-            descr.append("</li>");
-        }
-        descr.append("</ul>");
-        // Generazione descr
-        return descr.toString();
-    }
-
 }
