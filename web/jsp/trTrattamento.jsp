@@ -83,11 +83,7 @@
   <c:if test="${not empty trattamento.attivita}">
       <hr class="separatore" />
       <span class="bordo">Rientrano nel trattamento le seguenti attivit&agrave;:</span>
-    <c:set var="listClass" value="" scope="page" />
-    <c:if test="${trattamento.attivita.size() lt 7}">
-      <c:set var="listClass" value="list-group-horizontal" scope="page" />
-    </c:if>
-      <ul class="list-group ${listClass}">
+      <ul class="list-group">
     <c:forEach var="attivita" items="${trattamento.attivita}">
         <li class="list-group-item">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
@@ -387,7 +383,7 @@
       <a href="${tr}" class="btn btn-primary" title="Torna all'elenco">
         <i class="far fa-times-circle"></i> Chiudi 
       </a>
-      <a href="javascript:print()" class="btn btn-warning" title="Anteprima di stampa">
+      <a href="javascript:print()" class="btn btn-warning">
         <i class="fas fa-print"></i> Stampa
        </a> 
     </div>    
