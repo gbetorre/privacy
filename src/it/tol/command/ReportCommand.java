@@ -44,14 +44,14 @@ import javax.servlet.http.HttpSession;
 
 import com.oreilly.servlet.ParameterParser;
 
-import it.tol.Constants;
-import it.tol.DBWrapper;
 import it.tol.Main;
 import it.tol.bean.ItemBean;
 import it.tol.bean.PersonBean;
 import it.tol.bean.ProcessBean;
 import it.tol.exception.CommandException;
 import it.tol.exception.WebStorageException;
+import it.tol.interfaces.Constants;
+import it.tol.wrapper.DBWrapper;
 
 
 /**

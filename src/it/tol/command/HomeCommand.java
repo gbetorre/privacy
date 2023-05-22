@@ -48,17 +48,17 @@ import javax.servlet.http.HttpSession;
 import com.oreilly.servlet.ParameterParser;
 
 import it.tol.ConfigManager;
-import it.tol.Constants;
-import it.tol.DBWrapper;
 import it.tol.Main;
-import it.tol.Query;
-import it.tol.Utils;
 import it.tol.bean.CodeBean;
 import it.tol.bean.ItemBean;
 import it.tol.bean.PersonBean;
 import it.tol.exception.AttributoNonValorizzatoException;
 import it.tol.exception.CommandException;
 import it.tol.exception.WebStorageException;
+import it.tol.interfaces.Constants;
+import it.tol.interfaces.Query;
+import it.tol.utils.Utils;
+import it.tol.wrapper.DBWrapper;
 
 
 /**

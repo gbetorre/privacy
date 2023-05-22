@@ -34,7 +34,7 @@ package it.tol.bean;
 
 import java.io.Serializable;
 
-import it.tol.Utils;
+import it.tol.utils.Utils;
 
 /**
  * <p>Classe che serve a rappresentare oggetti generici (p.es. voci in un menu,
