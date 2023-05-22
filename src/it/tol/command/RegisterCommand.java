@@ -49,8 +49,6 @@ import com.oreilly.servlet.ParameterParser;
 
 import it.tol.command.HomeCommand;
 import it.tol.ConfigManager;
-import it.tol.Constants;
-import it.tol.DBWrapper;
 import it.tol.Main;
 import it.tol.bean.CodeBean;
 import it.tol.bean.DepartmentBean;
@@ -61,6 +59,8 @@ import it.tol.bean.ProcessingBean;
 import it.tol.exception.AttributoNonValorizzatoException;
 import it.tol.exception.CommandException;
 import it.tol.exception.WebStorageException;
+import it.tol.interfaces.Constants;
+import it.tol.wrapper.DBWrapper;
 
 
 /** 
@@ -162,7 +162,7 @@ public class RegisterCommand extends ItemBean implements Command, Constants {
         // Utente loggato
         PersonBean user = null;
         // Trattamento specifico
-        ProcessingBean treat = null;
+        ProcessingBean t = null;
         // Elenco dei trattamenti legati alla rilevazione
         ArrayList<ItemBean> treats = null;
         // Elenco strutture collegate alla rilevazione
@@ -258,8 +258,7 @@ public class RegisterCommand extends ItemBean implements Command, Constants {
                          * ************************************************ */
                         if (!codeT.equals(DASH)) {
                             // Recupera il trattamento dati
-                            ItemBean stato = new ItemBean(GET_ALL_BY_CLAUSE, GET_ALL_BY_CLAUSE);
-                            treat = db.getTrattamento(user, codeT, stato, survey);
+                            t = retrieve(user, codeT, STATE_ACTIVE, survey, db);
                             // Ha bisogno di personalizzare le breadcrumbs
                             LinkedList<ItemBean> breadCrumbs = (LinkedList<ItemBean>) req.getAttribute("breadCrumbs");
                             bC = HomeCommand.makeBreadCrumbs(breadCrumbs, ELEMENT_LEV_1, "Trattamento Dati");
@@ -303,8 +302,8 @@ public class RegisterCommand extends ItemBean implements Command, Constants {
          *              Settaggi in request dei valori calcolati                *
          * ******************************************************************** */
         // Imposta nella request oggetto trattamento specifico
-        if (treat != null) {
-            req.setAttribute("trattamento", treat);
+        if (t != null) {
+            req.setAttribute("trattamento", t);
         }      
         // Imposta nella request elenco completo registro trattamenti
         if (treats != null) {
@@ -337,50 +336,33 @@ public class RegisterCommand extends ItemBean implements Command, Constants {
     
     
     /**
-     * <p>Estrae l'elenco dei quesiti e, per ogni quesito figlio trovato,
-     * lo valorizza con gli attributi aggiuntivi (tipo, formulazione, etc.)</p>
+     * <p>Estrae un trattamento dati partendo dal suo codice e dai valori di stato;
+     * in particolare l'intero che rappresenta lo stato pu&ograve; assumere i valori:
+     * <dl>
+     * <dt>1</dt>
+     * <dd>significa che il trattamento cercato dev'essere in stato attivo;</dd> 
+     * <dt>-1</dt>
+     * <dd>neutralizza la clausola e recupera il trattamento indipendentemente dallo stato.</dd>
+     * </dl></p>
      * 
-     * @param user          utente loggato
-     * @param codeSurvey    codice testuale della rilevazione
-     * @param idQ           identificativo del quesito 
-     * @param getAll        flag specificante, se vale -1, che si vogliono recuperare tutte le strutture collegate a tutti i macro/processi
-     * @param db            databound gia' istanziato
-     * @return <code>ArrayList&lt;QuestionBean&gt;</code> - ArrayList di quesiti trovati completi di quesiti figli (quesiti "di cui")
+     * @param user      utente loggato
+     * @param codeT     codice identificativo del trattamento
+     * @param idStato   identificativo dello stato del trattamento
+     * @param survey    rilevazione
+     * @param db        databound gia' istanziato
+     * @return <code>ProcessingBean</code> - trattamento 
      * @throws CommandException se si verifica un problema nella query o nell'estrazione, nel recupero di valori o in qualche altro tipo di puntamento
-     *//*
-    public static ArrayList<QuestionBean> retrieveQuestions(PersonBean user,
-                                                            String codeSurvey,
-                                                            int idQ,
-                                                            int getAll,
-                                                            DBWrapper db)
-                                                     throws CommandException {
-        // Recupera l'oggetto rilevazione a partire dal suo codice
-        CodeBean survey = ConfigManager.getSurvey(codeSurvey);
-        // Dichiara la lista di quesiti finiti
-        ArrayList<QuestionBean> richQuestions = new ArrayList<>();
+     */
+    public static ProcessingBean retrieve(PersonBean user,
+                                          String codeT,
+                                          int idStato,
+                                          CodeBean survey,
+                                          DBWrapper db)
+                                   throws CommandException {
         try {
-            // Chiama il metodo (ricorsivo) del databound che estrae i quesiti valorizzati
-            ArrayList<QuestionBean> questions = db.getQuestions(user, survey, idQ, getAll);
-            // Cicla sui quesiti trovati
-            for (QuestionBean current : questions) {
-                // Per ogni quesito verifica se ha figli
-                ArrayList<QuestionBean> childQuestions = current.getChildQuestions();
-                // Se li ha:
-                if (childQuestions != null) {
-                    // Per ogni figlio (i figli hanno solo gli id)
-                    for (int i = NOTHING; i < childQuestions.size(); i++) {
-                        // Recupera il figlio
-                        QuestionBean child = childQuestions.get(i);
-                        // Lo arricchisce con il tipo e gli altri attributi
-                        QuestionBean richChild = db.getQuestions(user, survey, child.getId(), child.getId()).get(NOTHING);
-                        // Sostituisce il tipo "arricchito" al tipo "povero"
-                        childQuestions.set(i, richChild);
-                    }
-                    current.setChildQuestions(childQuestions);
-                }
-                richQuestions.add(current);
-            }
-            return richQuestions;
+            ItemBean stato = new ItemBean(idStato, idStato);
+            ProcessingBean treat = db.getTrattamento(user, codeT, stato, survey);
+            return treat;
         } catch (WebStorageException wse) {
             String msg = FOR_NAME + "Si e\' verificato un problema nel recupero di valori dal db.\n";
             LOG.severe(msg);
@@ -392,6 +374,53 @@ public class RegisterCommand extends ItemBean implements Command, Constants {
         }
     }
     
+
+    /**
+     * <p>Estrae elenco di tutti i trattamenti dati collegati a una data rilevazione, 
+     * partendo dal suo codice e dai valori di stato;
+     * in particolare l'intero che rappresenta lo stato pu&ograve; assumere i valori:
+     * <dl>
+     * <dt>1</dt>
+     * <dd>significa che i trattamenti devono essere in stato attivo;</dd> 
+     * <dt>-1</dt>
+     * <dd>neutralizza la clausola e recupera tutti i trattamenti indipendentemente dallo stato.</dd>
+     * </dl></p>
+     * 
+     * @param user      utente loggato
+     * @param idStato   identificativo dello stato trattamento
+     * @param survey    rilevazione
+     * @param db        databound gia' istanziato
+     * @return <code>ArrayList&lt;ProcessingBean&gt;</code> - ArrayList di trattamenti trovati 
+     * @throws CommandException se si verifica un problema nella query o nell'estrazione, nel recupero di valori o in qualche altro tipo di puntamento
+     */
+    public static ArrayList<ProcessingBean> retrieve(PersonBean user,
+                                                     int idStato,
+                                                     CodeBean survey,
+                                                     DBWrapper db)
+                                              throws CommandException {
+        // Dichiara lista di trattamenti
+        ArrayList<ProcessingBean> vTr = new ArrayList<>();
+        try {
+            ArrayList<ItemBean> vRaw = db.getTrattamenti(user, survey);
+            // Cicla sui trattamenti trovati
+            for (ItemBean raw : vRaw) {
+                String codeT = raw.getCodice();
+                ItemBean stato = new ItemBean(idStato, idStato);
+                ProcessingBean t = db.getTrattamento(user, codeT, stato, survey);
+                vTr.add(t);
+            }
+            return vTr;
+        } catch (WebStorageException wse) {
+            String msg = FOR_NAME + "Si e\' verificato un problema nel recupero di valori dal db.\n";
+            LOG.severe(msg);
+            throw new CommandException(msg + wse.getMessage(), wse);
+        } catch (Exception e) {
+            String msg = FOR_NAME + "Si e\' verificato un problema.\n";
+            LOG.severe(msg);
+            throw new CommandException(msg + e.getMessage(), e);
+        }
+    }
+
     
     /**
      * <p>Valorizza per riferimento una mappa contenente tutti i valori 
