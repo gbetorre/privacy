@@ -464,12 +464,8 @@ public class Data extends HttpServlet implements Constants {
                     // 0. Frontespizio
                     DocWrapper.makeFrontPage(pf, pdfDoc);
                 }
-                // 1. Ambito di applicazione
-                DocWrapper.makeFirstPage(pf, pdfDoc);
-                // 2. Dati di Contatto
-                DocWrapper.makeSecondPage(pf, pdfDoc);
                 // Dettagli trattamento/i
-                DocWrapper.makeDetailPages(pf, pdfDoc, list);
+                DocWrapper.makePages(pf, pdfDoc, list);
                 // Save the document to the servlet output stream. This goes directly to the browser
                 pdfDoc.saveDocument(out);
     
