@@ -372,7 +372,13 @@ public class ConfigManager extends HttpServlet {
          * Ottiene il percorso del logo (di default va in produzione, ma se non siamo in produzione deve andare in locale)
          */
         if ( !getServletContext().getRealPath("/").equals(realPath) ) {
+            // Ambiente di sviluppo Windows
             dirImages = new StringBuffer("C:\\Programs\\apache-tomcat-8.5.31\\webapps\\privacy\\web\\img\\");
+            if (getServletContext().getRealPath("/").startsWith("/home/")) {
+                // Ambiente di sviluppo Linux
+                dirImages = new StringBuffer("/home/outer-root/git/privacy/web/img/");
+            }
+
         }
     }
 
