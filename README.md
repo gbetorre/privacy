@@ -63,7 +63,7 @@ Ottenere e mantenere un registro digitale delle attivit&agrave; di trattamento, 
 * possibilit&agrave; di ottenere rapidamente estrazioni dati da presentare all'autorit&agrave; competente, in caso di ispezioni; 
 * possibilit&agrave; di effettuare Query analitiche sui dati trattati, che consentano di risalire alle misure di sicurezza messe in atto, e alle strutture interessate, in caso di data breach.
 
-[product-screenshot3]](https://github.com/gbetorre/privacy/blob/main/web/img/product-screenshot3.png)
+[![Product Name Screen Shot][product-screenshot3]](https://github.com/gbetorre/privacy/blob/main/web/img/product-screenshot3.png)
 
 Quelli elencati sopra sono soltanto alcuni dei principali aspetti positivi legati all'informatizzazione del registro delle attivit&agrave; di trattamento dati.
 
@@ -243,7 +243,7 @@ e dei deploy che sono stati effettuati
 e fornirvi il relativo significato e la relativa motivazione.
 </small></p>
 
-[issues-shield] Vedi anche [open issues](https://github.com/gbetorre/privacy/issues) per una lista completa di funzionalit&agrave; proposte (e problemi conosciuti).
+[![issues][issues-shield]][issues-url] Vedi anche [open issues](https://github.com/gbetorre/privacy/issues) per una lista completa di funzionalit&agrave; proposte (e problemi conosciuti).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
