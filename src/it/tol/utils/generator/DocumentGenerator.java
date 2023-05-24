@@ -32,14 +32,7 @@
 
 package it.tol.utils.generator;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Stroke;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
@@ -50,7 +43,6 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 import com.qoppa.pdfWriter.PDFDocument;
-import com.qoppa.pdfWriter.PDFPage;
 
 import it.tol.ConfigManager;
 import it.tol.interfaces.Constants;
@@ -97,7 +89,7 @@ public class DocumentGenerator implements Constants {
     
     
     /**
-     * Imposta il formato della pagina
+     * Imposta il formato della pagina.
      * 
      * @return <code>PageFormat</code> - formato della pagina (altezza, larghezza, orientamento)
      */
@@ -120,7 +112,7 @@ public class DocumentGenerator implements Constants {
     
     /**
      * Restituisce una qualunque immagine raster sotto forma di BufferedImage,
-     * a partire dal suo nome, ricevuto come argomento
+     * a partire dal suo nome, ricevuto come argomento.
      * 
      * @param imageName il nome dell'immagine raster da recuperare
      * @return <code>BufferedImage</code> - Oggetto che descrive un'immagine con un buffer accessibile di dati relativi all'immagine raster
@@ -135,7 +127,7 @@ public class DocumentGenerator implements Constants {
     
     /**
      * Restituisce una nuova coordinata a partire da una vecchia coordinata ed un 
-     * incremento, entrambi passati come parametri
+     * incremento, entrambi passati come parametri.
      * 
      * @param coord     la coordinata originaria
      * @param increment l'incremento da sommare (algebricamente)
@@ -176,7 +168,7 @@ public class DocumentGenerator implements Constants {
     
     
     /**
-     * Java wrap text in graphics2D
+     * Java wrap text in graphics2D.
      * 
      * @param graph2D       Grapics2D
      * @param textIn        text to wrap
@@ -254,14 +246,14 @@ public class DocumentGenerator implements Constants {
     }
 
     
-    //text = text.replaceAll("<br ?/?>", "\r\n");
-    //text = text.replaceAll("<?/?strong>", VOID_STRING);
     public static String cleanHtml(String html) {
         String text = html.replaceAll("<p style=\"text-align: justify;\">", VOID_STRING)
                           .replaceAll("</p>", VOID_STRING)
                           .replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", VOID_STRING)
                           .replaceAll("&ndash;", String.valueOf(HYPHEN))
                           .replaceAll("&rsquo;", String.valueOf(APOSTROPHE))
+                          .replaceAll("&ldquo;", "‟")
+                          .replaceAll("&rdquo;", "”")
                           .replaceAll("&agrave;", "à")
                           .replaceAll("&egrave;", "è");
         return text;
