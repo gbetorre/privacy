@@ -61,7 +61,9 @@ Ottenere e mantenere un registro digitale delle attivit&agrave; di trattamento, 
 
 * possibilit&agrave; di rigenerare il registro digitale da un anno all'altro operando poi per differenza rispetto all'anno precedente;
 * possibilit&agrave; di ottenere rapidamente estrazioni dati da presentare all'autorit&agrave; competente, in caso di ispezioni; 
-* possibilit&agrave; di effettuare Query analitiche sui dati trattati, che consentano di risalire alle misure di sicurezza messe in atto, e alle strutture interessate, in caso di data breach;
+* possibilit&agrave; di effettuare Query analitiche sui dati trattati, che consentano di risalire alle misure di sicurezza messe in atto, e alle strutture interessate, in caso di data breach.
+
+[product-screenshot3]](https://github.com/gbetorre/privacy/blob/main/web/img/product-screenshot3.png)
 
 Quelli elencati sopra sono soltanto alcuni dei principali aspetti positivi legati all'informatizzazione del registro delle attivit&agrave; di trattamento dati.
 
@@ -186,23 +188,6 @@ entrare nel merito di tutte le modifiche effettuate in corrispondenza della
 sottoversione: inoltre, ogni versione corrisponde ad un commit, ma non ogni commit
 genera una versione.<br />
 
-<p><small>
-NOTA: Per convenzione, nel software la versione viene mostrata in formato x.xx
-quindi accorpando la cifra della sub-sub versione a quella della subversione,
-mentre in questo changelog ha il classico formato x.x.x (ci&ograve;
-per apportare maggiore precisione descrittiva).<br />
-Inoltre, il significato delle subversioni &egrave; abbastanza differente da
-quello generale; infatti non identifica se la versione sia stabile o meno
-(aspetto solitamente identificato rispettivamente dalla cifra finale diversa da zero o uguale a zero)
-n&eacute; presenta salti rilevanti in funzione di modifiche di elevato impatto
-(p.es. passaggio dalla versione 6.1.38 alla versione 7.0.1 di VirtualBox, che ha
-segnato una modifica abbastanza grossa); nel caso dell'applicazione corrente, infatti,
-i numeri di versione hanno solo il signficato di tenere traccia dei rilasci 
-e dei deploy che sono stati effettuati 
-(1.1.9 = XIX deploy; 1.2.0 = XX deploy; 1.9.9 = IC deploy; 2.0.0 = C deploy)
-e fornirvi il relativo significato e la relativa motivazione.
-</small></p>
-
 <!--
 ### ToDo (Roadmap)
 
@@ -224,11 +209,12 @@ e fornirvi il relativo significato e la relativa motivazione.
 - [1.2.1] (22/11/2022) Mostrato in nodo albero processi numero di input e fasi
 - [1.2.0] (21/11/2022) Implementato questo file di documentazione
 -->
+- [1.0.6] (24/05/2023) Aggiunte nel registro PDF informazioni su: destinatari; termini di cancellazione dati; misure di sicurezza; luoghi di custodia; db; ulteriori info
 - [1.0.5] (22/05/2023) Aggiunta possibilità di esportare elenco trattamenti o dettaglio singolo trattamento in formato PDF
 - [1.0.4] (27/04/2023) Aggiunta visualizzazione basi giuridiche, banche dati, icone
 - [1.0.3] (26/04/2023) Migliorata presentazione elenco TR; aggiunte info su titolare e DPO di ogni trattamento
 - [1.0.2] (17/04/2023) Miglioramenti grafici e contenutistici alla pagina dettagli trattamento dati
-- [1.0.1] (11/04/2023) Bozza pagina dettagli trattamento dati
+- [1.0.1] (11/04/2023) Bozza pagina dettagli trattamento dati (TR)
 - [1.0.0] (27/03/2023) Initial commit
 
 
@@ -240,7 +226,24 @@ e fornirvi il relativo significato e la relativa motivazione.
     - [ ] Spanish
 -->
 
-Vedi anche [open issues](https://github.com/gbetorre/privacy/issues) per una lista completa di funzionalit&agrave; proposte (e problemi conosciuti).
+<p><small>
+NOTA: Per convenzione, nel software la versione viene mostrata in formato x.xx
+quindi accorpando la cifra della sub-sub versione a quella della subversione,
+mentre in questo changelog ha il classico formato x.x.x (ci&ograve;
+per apportare maggiore precisione descrittiva).<br />
+Inoltre, il significato delle subversioni &egrave; abbastanza differente da
+quello generale; infatti non identifica se la versione sia stabile o meno
+(aspetto solitamente identificato rispettivamente dalla cifra finale diversa da zero o uguale a zero)
+n&eacute; presenta salti rilevanti in funzione di modifiche di elevato impatto
+(p.es. passaggio dalla versione 6.1.38 alla versione 7.0.1 di VirtualBox, che ha
+segnato una modifica abbastanza grossa); nel caso dell'applicazione corrente, infatti,
+i numeri di versione hanno solo il signficato di tenere traccia dei rilasci 
+e dei deploy che sono stati effettuati 
+(1.1.9 = XIX deploy; 1.2.0 = XX deploy; 1.9.9 = IC deploy; 2.0.0 = C deploy)
+e fornirvi il relativo significato e la relativa motivazione.
+</small></p>
+
+[issues-shield] Vedi anche [open issues](https://github.com/gbetorre/privacy/issues) per una lista completa di funzionalit&agrave; proposte (e problemi conosciuti).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -255,6 +258,7 @@ Vedi anche [open issues](https://github.com/gbetorre/privacy/issues) per una lis
 [forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
 [product-screenshot]: https://github.com/gbetorre/privacy/blob/main/web/img/product-screenshot.png
 [product-screenshot2]: https://github.com/gbetorre/privacy/blob/main/web/img/product-screenshot2.png
+[product-screenshot3]: https://github.com/gbetorre/privacy/blob/main/web/img/product-screenshot3.png
 [issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
 [issues-url]: https://github.com/othneildrew/Best-README-Template/issues
 [license-shield]: https://img.shields.io/badge/license-GPL-blue
