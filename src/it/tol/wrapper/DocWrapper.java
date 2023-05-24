@@ -51,6 +51,7 @@ import com.qoppa.pdfWriter.PDFPage;
 import it.tol.Data;
 import it.tol.bean.ActivityBean;
 import it.tol.bean.CodeBean;
+import it.tol.bean.ProcessBean;
 import it.tol.bean.ProcessingBean;
 import it.tol.exception.AttributoNonValorizzatoException;
 import it.tol.exception.CommandException;
@@ -86,7 +87,7 @@ public class DocWrapper extends DocumentGenerator implements Constants {
     
     
     /**
-     * Restituisce il logo codificato sotto forma di BufferedImage
+     * Restituisce il logo codificato sotto forma di BufferedImage.
      * 
      * @return <code>BufferedImage</code> - Oggetto che descrive un'immagine con un buffer accessibile di dati relativi all'immagine raster
      * @throws IOException se si verifica un problema nell'accesso alla risorsa da codificare
@@ -264,7 +265,7 @@ public class DocWrapper extends DocumentGenerator implements Constants {
         g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
         y = println("Tel. 0458028777", getCoordinate(x, i*11), y, i, g2d);
         y = println("E-mail: privacy@ateneo.univr.it", getCoordinate(x, i*11), y, i, g2d);
-        y = y + i/2;
+        y += i/2;
         g2d.drawRoundRect(x, y, 450, 155, 2, 2);
         g2d.setFont(new Font ("Arial", Font.BOLD, 11));
         y = println("Responsabile della Protezione", getCoordinate(x, i), y, i, g2d);
@@ -338,12 +339,45 @@ public class DocWrapper extends DocumentGenerator implements Constants {
         g.setFont(new Font ("Helvetica", Font.BOLD, 14));
         g.setColor(Color.white);
         y = println("Codice" + BLANK_SPACE + COLON + BLANK_SPACE + t.getCodice(), x, y, s*3, g);
-        y = y + s;
+        y += s;
         String[] titleAsArray = wrapText(g, t.getNome(), width);
         for (int i = 0; i < titleAsArray.length; i++) {
-            y = y + s*2;
-            g.drawString(titleAsArray[i], x, y);
+            y = println(titleAsArray[i], x, y, s*2, g);
         }
+    }
+    
+    
+    /**
+     * Produce l'intestazione di una pagina interna di un trattamento.
+     * 
+     * @param g     l'oggetto Graphics2D in cui impostare la stampa
+     * @param t     l'oggetto contenente i dati del trattamento
+     * @return <code>int</code> - il valore della coordinata verticale raggiunta
+     * @throws IOException se si verifica un problema nel puntamento a una risorsa (immagine)
+     * @throws AttributoNonValorizzatoException se si verifica un problema nel recupero di un attributo obbligatorio del bean
+     */
+    public static int makeHeaderInternalPage(Graphics2D g,
+                                                ProcessingBean t)
+                                         throws IOException, 
+                                                AttributoNonValorizzatoException {
+        int y = 85;
+        int s = 8;
+        int width = 450;
+        // Logo
+        printLogo(g);
+        // Draw a coloured rectangle
+        g.setColor(Color.BLUE);
+        g.drawRoundRect(60, y, 500, 70, 2, 2);
+        // Draw a round border to the rectangle
+        g.setStroke(new BasicStroke(6));
+        // Draw a string
+        y = println("Codice" + BLANK_SPACE + COLON + BLANK_SPACE + t.getCodice(), x, y, s*3, g);
+        y += s;
+        String[] titleAsArray = wrapText(g, t.getNome(), width);
+        for (int i = 0; i < titleAsArray.length; i++) {
+            y = println(titleAsArray[i], x, y, s*2, g);
+        }
+        return y;
     }
     
     
@@ -360,7 +394,7 @@ public class DocWrapper extends DocumentGenerator implements Constants {
                                           PDFDocument doc,
                                           ProcessingBean t)
                                    throws CommandException {
-        int y = 85;
+        int y = 140;
         int s = 8;
         int pageHeight = 700;
         try {
@@ -380,13 +414,12 @@ public class DocWrapper extends DocumentGenerator implements Constants {
                 String[] textAsArray = wrapText(g2d, text, 600);
                 g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
                 for (int i = 0; i < textAsArray.length; i++) {
-                    y = y + s*2;
-                    g2d.drawString(textAsArray[i], x, y);
+                    y = println(textAsArray[i], x, y, s*2, g2d);
                 }
             }
             // Attività di trattamento
             g2d.setFont(new Font ("Helvetica", Font.BOLD, 14));
-            y = y + s*5;
+            y += s*5;
             g2d.drawString("Attività di trattamento" + BLANK_SPACE + "(" + t.getAttivita().size() + ")", x, y);
             // Horizontal rule
             float[] dashingPattern1 = {1f, 1f};
@@ -398,11 +431,11 @@ public class DocWrapper extends DocumentGenerator implements Constants {
                 ActivityBean a = vA.get(i);
                 String text = a.getNome();
                 String[] textAsArray = wrapText(g2d, text, 450);
-                y = y + s;
+                y += s;
                 g2d.setStroke(stroke1);
                 g2d.drawLine(x, y, 550, y);
                 for (int j = 0; j < textAsArray.length; j++) {
-                    y = y + s*2;
+                    y += s*2;
                     if (y < pageHeight) {
                         g2d.drawString(textAsArray[j], x, y);
                     } else {
@@ -433,42 +466,6 @@ public class DocWrapper extends DocumentGenerator implements Constants {
         }
     }
     
- 
-    /**
-     * Produce l'intestazione di una pagina interna di un trattamento.
-     * 
-     * @param g     l'oggetto Graphics2D in cui impostare la stampa
-     * @param t     l'oggetto contenente i dati del trattamento
-     * @return <code>int</code> - il valore della coordinata verticale raggiunta
-     * @throws IOException se si verifica un problema nel puntamento a una risorsa (immagine)
-     * @throws AttributoNonValorizzatoException se si verifica un problema nel recupero di un attributo obbligatorio del bean
-     */
-    public static int makeHeaderInternalPage(Graphics2D g,
-                                                ProcessingBean t)
-                                         throws IOException, 
-                                                AttributoNonValorizzatoException {
-        int y = 85;
-        int s = 8;
-        int width = 450;
-        // Logo
-        printLogo(g);
-        // Draw a coloured rectangle
-        g.setColor(Color.BLUE);
-        g.drawRoundRect(60, y, 500, 70, 2, 2);
-        // Draw a round border to the rectangle
-        g.setStroke(new BasicStroke(6));
-        // Draw a string
-        g.setFont(new Font ("Helvetica", Font.BOLD, 14));
-        y = println("Codice" + BLANK_SPACE + COLON + BLANK_SPACE + t.getCodice(), x, y, s*3, g);
-        y = y + s;
-        String[] titleAsArray = wrapText(g, t.getNome(), width);
-        for (int i = 0; i < titleAsArray.length; i++) {
-            y = y + s*2;
-            g.drawString(titleAsArray[i], x, y);
-        }
-        return y;
-    }
-    
     
     /**
      * Assunto che si verifichi il caso in cui la lista delle attivit&agrave; 
@@ -478,12 +475,12 @@ public class DocWrapper extends DocumentGenerator implements Constants {
      * Sa da quale attivt&agrave; di trattamento partire perch&eacute; si basa sul
      * numero d'indice dell'attivit&agrave; stessa, passato come parametro. 
      * 
-     * @param pf
-     * @param doc
-     * @param t
-     * @param count
-     * @return
-     * @throws CommandException
+     * @param pf    formato della pagina
+     * @param doc   istanza di documento PDF
+     * @param t     oggetto contenente i dati del trattamento
+     * @param count numero d'indice dell'attivita' da cui partire per scorrere le attivita'
+     * @return <code>int</code> - l'indice corrente delle attivit&agrave; di trattamento stampate nella prima pagina, o il numero totale di esse se la stampa non ha ecceduto l'altezza di pagina
+     * @throws CommandException se si verifica un problema nel recupero di una risorsa, di valori o in qualche altro tipo di puntamento
      */
     private static int makeActivitiesPage(PageFormat pf, 
                                           PDFDocument doc,
@@ -492,16 +489,17 @@ public class DocWrapper extends DocumentGenerator implements Constants {
                                    throws CommandException {
         int y = 85;
         int s = 8;
+        int pageHeight = 700;
         try {
             // Create a page in the document
             PDFPage page = doc.createPage(pf);
             // Create Graphics2D
             Graphics2D g2d = page.createGraphics(); 
-            // Make the heder of the first processing page
+            // Make the heder of the internal page
             y = makeHeaderInternalPage(g2d, t);
             // Draw to the page
             g2d.setColor(Color.black);
-            y = y + s*4;
+            y += s*4;
             // Riga orizzontale
             float[] dashingPattern1 = {1f, 1f};
             Stroke stroke1 = new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, dashingPattern1, 2.0f);
@@ -512,19 +510,19 @@ public class DocWrapper extends DocumentGenerator implements Constants {
                 String text = a.getNome();
                 String[] textAsArray = wrapText(g2d, text, 450);
                 g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
-                y = y + s;
+                y += s;
                 g2d.setStroke(stroke1);
                 g2d.drawLine(x, y, 550, y);
                 for (int j = 0; j < textAsArray.length; j++) {
-                    y = y + s*2;
-                    if (y < 700) {
+                    y += s*2;
+                    if (y < pageHeight) {
                         g2d.drawString(textAsArray[j], x, y);
                     } else {
                         count2 = i;
                         break;
                     }
                 }
-                if (y > 700) {
+                if (y > pageHeight) {
                     doc.addPage(page);
                     return count2;
                 }
@@ -548,96 +546,75 @@ public class DocWrapper extends DocumentGenerator implements Constants {
     }
         
     
+    /**
+     * Genera la pagina delle basi giuridiche di un trattamento passato come parametro.
+     * 
+     * @param pf    formato della pagina
+     * @param doc   istanza di documento PDF
+     * @param t     oggetto contenente i dati del trattamento
+     * @return <code>int</code> - l'indice corrente delle basi giuridiche di trattamento stampate nella pagina, o il numero totale di esse se la stampa non ha ecceduto l'altezza di pagina
+     * @throws CommandException se si verifica un problema nel recupero di una risorsa, di valori o in qualche altro tipo di puntamento
+     */
     private static int makeLegalBasisPage(PageFormat pf, 
-                                      PDFDocument doc,
-                                      ProcessingBean t)
-                               throws CommandException {
-        int y = 85;
+                                          PDFDocument doc,
+                                          ProcessingBean t)
+                                   throws CommandException {
+        int y = 180;
         int s = 8;
+        int pageHeight = 720;
+        int count = NOTHING;
         try {
             // Create a page in the document
             PDFPage page = doc.createPage(pf);
             // Create Graphics2D
             Graphics2D g2d = page.createGraphics(); 
-            // Read an image (could be png, jpg, etc...)
-            BufferedImage image = getLogo();
-            // Draw the image on the page
-            g2d.drawImage(image, 10, 10, 209, 75, null);
-            // Draw a coloured rectangle
-            g2d.setColor(Color.BLUE);
-            g2d.drawRoundRect(60, y, 500, 70, 2, 2);
-            // Draw a round border to the rectangle
-            g2d.setStroke(new BasicStroke(6));
-            y = y + s*3;
-            g2d.drawString("Codice" + BLANK_SPACE + COLON + BLANK_SPACE + t.getCodice(), x, y);
-            y = y + s;
-            String[] titleAsArray = wrapText(g2d, t.getNome(), 450);
-            for (int i = 0; i < titleAsArray.length; i++) {
-                y = y + s*2;
-                g2d.drawString(titleAsArray[i], x, y);
-            }
-            g2d.setColor(Color.black);
+            // Make the heder of the page
+            makeHeaderInternalPage(g2d, t);
             // Draw a string
-            y = 180;
+            g2d.setColor(Color.black);
             g2d.setFont(new Font ("Helvetica", Font.BOLD, 14));
             g2d.drawString("Descrizione delle finalità perseguite", x, y);
             // Draw to the page
-            String text = t.getFinalita()
-                            .replaceAll("<p style=\"text-align: justify;\">", VOID_STRING)
-                            .replaceAll("</p>", VOID_STRING)
-                            .replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", VOID_STRING)
-                            .replaceAll("&ndash;", String.valueOf(HYPHEN))
-                            .replaceAll("&rsquo;", String.valueOf(APOSTROPHE))
-                            .replaceAll("&agrave;", "à")
-                            .replaceAll("&egrave;", "è");
-            //text = text.replaceAll("<br ?/?>", "\r\n");
-            //text = text.replaceAll("<?/?strong>", VOID_STRING);
+            String text = cleanHtml(t.getFinalita());
             String[] textAsArray = wrapText(g2d, text, 600);
             g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
-            //y = y + s;
             for (int i = 0; i < textAsArray.length; i++) {
-                y = y + s*2;
-                g2d.drawString(textAsArray[i], x, y);
+                y = println(textAsArray[i], x, y, s*2, g2d);
             }
             g2d.setFont(new Font ("Helvetica", Font.BOLD, 14));
-            y = y + s*5;
-            g2d.drawString("Basi giuridiche" + BLANK_SPACE + "(" + t.getBasiGiuridiche().size() + ")", x, y);
-            // Draw to the page
+            y = println("Basi giuridiche" + BLANK_SPACE + "(" + t.getBasiGiuridiche().size() + ")", x, y, s*5, g2d);
             // Draw to the page
             float[] dashingPattern1 = {1f, 1f};
             Stroke stroke1 = new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, dashingPattern1, 2.0f);
-            int count = NOTHING;
             ArrayList<ActivityBean> vB = t.getBasiGiuridiche();
             for (int i = 0; i < vB.size(); i++) {
                 ActivityBean base = vB.get(i);
                 textAsArray = wrapText(g2d, base.getNome(), 450);
                 g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
-                y = y + s;
+                y += s;
                 g2d.setStroke(stroke1);
                 g2d.drawLine(x, y, 550, y);
                 for (int j = 0; j < textAsArray.length; j++) {
-                    y = y + s*2;
-                    if (y < 720) {
+                    y += s*2;
+                    if (y < pageHeight) {
                         g2d.drawString(textAsArray[j], x, y);
                     } else {
                         count = i;
                         break;
                     }
                 }
-                y = y + s*2;
+                y += s*2;
                 if (base.getCodice().equals("C")) {
                     g2d.drawString("(DATI COMUNI)", x, y);
                 } else if (base.getCodice().equals("P")) {
                     g2d.drawString("(DATI PARTICOLARI)", x, y);
                 }
                 g2d.setFont(new Font ("Arial", Font.ITALIC, 11));
-                y = y + s*2;
-                g2d.drawString(base.getDescrizione(), x, y);
+                y = println(base.getDescrizione(), x, y, s*2, g2d);
                 if (base.getInformativa() != null && !base.getInformativa().equals(VOID_STRING)) {
                     String[] informativa = wrapText(g2d, base.getInformativa(), 450);
                     for (int j = 0; j < informativa.length; j++) {
-                        y = y + s*2;
-                        g2d.drawString(informativa[j], x, y);
+                        y = println(informativa[j], x, y, s*2, g2d);
                     }
                 }
             }
@@ -660,151 +637,91 @@ public class DocWrapper extends DocumentGenerator implements Constants {
     }
  
     
-    
-    private static int makeKindataPage(PageFormat pf, 
-                                      PDFDocument doc,
-                                      ProcessingBean t)
-                               throws CommandException {
-        int y = 85;
+    /**
+     * Stampa un tipo di dato trattato e il relativo check
+     * 
+     * @param g         l'oggetto Graphics2D in cui impostare la stampa
+     * @param flag      valore boolean specificante se il tipo di dato viene trattato
+     * @param stroke    forma per decorazioni
+     * @param label     etichetta specificante il tipo di dato trattato
+     * @param posY      coordinata verticale per il posizionamento delle stampe sul piano
+     * @return <code>int</code> - il valore della coordinata verticale raggiunta a seguito delle stampe prodotte dal metodo
+     * @throws NullPointerException se label e' null (implicita)
+     */
+    public static int printKindOfData(Graphics2D g,
+                                      boolean flag,
+                                      Stroke stroke,
+                                      String label,
+                                      int posY) {
+        int y = posY;
         int s = 8;
+        g.setStroke(stroke);
+        g.drawLine(x, y, 550, y);
+        y = println(label, x, y, s*2, g);
+        String check = (flag ? "[X]" : "[ ]") ;
+        g.drawString(check, 524, y);
+        return y;
+    }
+    
+    
+    /**
+     * Genera la pagina di descrizione delle categorie di interessati e delle
+     * categorie di dati personali di un trattamento passato come parametro.
+     * 
+     * @param pf    formato della pagina
+     * @param doc   istanza di documento PDF
+     * @param t     oggetto contenente i dati del trattamento
+     * @return <code>int</code> - l'indice corrente delle attivit&agrave; di trattamento stampate nella prima pagina, o il numero totale di esse se la stampa non ha ecceduto l'altezza di pagina
+     * @throws CommandException se si verifica un problema nel recupero di una risorsa, di valori o in qualche altro tipo di puntamento
+     */
+    private static int makeKindOfDataPage(PageFormat pf, 
+                                          PDFDocument doc,
+                                          ProcessingBean t)
+                                   throws CommandException {
+        int y = 180;
+        int s = 8;
+        int count = NOTHING;
         try {
             // Create a page in the document
             PDFPage page = doc.createPage(pf);
             // Create Graphics2D
             Graphics2D g2d = page.createGraphics(); 
-            // Read an image (could be png, jpg, etc...)
-            BufferedImage image = getLogo();
-            // Draw the image on the page
-            g2d.drawImage(image, 10, 10, 209, 75, null);
-            // Draw a coloured rectangle
-            g2d.setColor(Color.BLUE);
-            g2d.drawRoundRect(60, y, 500, 70, 2, 2);
-            // Draw a round border to the rectangle
-            g2d.setStroke(new BasicStroke(6));
-            y = y + s*3;
-            g2d.drawString("Codice" + BLANK_SPACE + COLON + BLANK_SPACE + t.getCodice(), x, y);
-            y = y + s;
-            String[] titleAsArray = wrapText(g2d, t.getNome(), 450);
-            for (int i = 0; i < titleAsArray.length; i++) {
-                y = y + s*2;
-                g2d.drawString(titleAsArray[i], x, y);
-            }
+            // Make the heder of the page
+            makeHeaderInternalPage(g2d, t);
+            // Draw a string            
             g2d.setColor(Color.black);
-            // Draw a string
-            y = 180;
             g2d.setFont(new Font ("Helvetica", Font.BOLD, 14));
             g2d.drawString("Descrizione delle categorie di interessati" + BLANK_SPACE + "(" + t.getInteressati().size() + ")", x, y);
             // Draw to the page
             float[] dashingPattern1 = {1f, 1f};
             Stroke stroke1 = new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, dashingPattern1, 2.0f);
-            int count = NOTHING;
             ArrayList<CodeBean> vSubj = t.getInteressati();
             for (int i = 0; i < vSubj.size(); i++) {
                 CodeBean subj = vSubj.get(i);
                 g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
-                y = y + s;
+                y += s;
                 g2d.setStroke(stroke1);
                 g2d.drawLine(x, y, 550, y);
-                y = y + s*2;
-                g2d.drawString(subj.getNome(), x, y);
-                g2d.setFont(new Font ("Arial", Font.ITALIC, 11));
-                y = y + s*2;
-                g2d.drawString("(" + subj.getInformativa() + ")", x, y);
+                y = println(subj.getNome() + " (" + subj.getInformativa() + ")", x, y, s*2, g2d);
+                //g2d.setFont(new Font ("Arial", Font.ITALIC, 11));
+                //y = println("(" + subj.getInformativa() + ")", x, y, s*2, g2d);
             }
             // Draw a string
-            y = y + s*5;
             g2d.setFont(new Font ("Helvetica", Font.BOLD, 14));
-            g2d.drawString("Descrizione delle categorie di dati personali", x, y);
+            y = println("Descrizione delle categorie di dati personali", x, y, s*5, g2d);
             // Draw to the page
-            g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
-            y = y + s;
-            g2d.setStroke(stroke1);
-            g2d.drawLine(x, y, 550, y);
-            y = y + s*2;
-            g2d.drawString("Dati comuni", x, y);
-            g2d.drawString("[", 450, y);
-            String check = (t.isDatiPersonali() ? "X" : String.valueOf(BLANK_SPACE) + String.valueOf(BLANK_SPACE) + String.valueOf(BLANK_SPACE)) ;
-            g2d.drawString(check + " ]", 455, y);
-            y = y + s;
-            g2d.setStroke(stroke1);
-            g2d.drawLine(x, y, 550, y);
-            y = y + s*2;
-            g2d.drawString("Dati sanitari", x, y);
-            g2d.drawString("[", 450, y);
-            check = (t.isDatiSanitari() ? "X" : String.valueOf(BLANK_SPACE) + String.valueOf(BLANK_SPACE) + String.valueOf(BLANK_SPACE)) ;
-            g2d.drawString(check + " ]", 455, y);
-            y = y + s;
-            g2d.setStroke(stroke1);
-            g2d.drawLine(x, y, 550, y);
-            y = y + s*2;
-            g2d.drawString("Dati relativi all\'orientamento sessuale", x, y);
-            g2d.drawString("[", 450, y);
-            check = (t.isDatiOrientamentoSex() ? "X" : String.valueOf(BLANK_SPACE) + String.valueOf(BLANK_SPACE) + String.valueOf(BLANK_SPACE)) ;
-            g2d.drawString(check + " ]", 455, y);
-            y = y + s;
-            g2d.setStroke(stroke1);
-            g2d.drawLine(x, y, 550, y);
-            y = y + s*2;
-            g2d.drawString("Dati relativi ad etnia, religione o appartenenza associativa", x, y);
-            g2d.drawString("[", 450, y);
-            check = (t.isDatiEtniaReligApp() ? "X" : String.valueOf(BLANK_SPACE) + String.valueOf(BLANK_SPACE) + String.valueOf(BLANK_SPACE)) ;
-            g2d.drawString(check + " ]", 455, y);
-            y = y + s;
-            g2d.setStroke(stroke1);
-            g2d.drawLine(x, y, 550, y);
-            y = y + s*2;
-            g2d.drawString("Dati relativi a soggetti minorenni", x, y);
-            g2d.drawString("[", 450, y);
-            check = (t.isDatiMinoreEta() ? "X" : String.valueOf(BLANK_SPACE) + String.valueOf(BLANK_SPACE) + String.valueOf(BLANK_SPACE)) ;
-            g2d.drawString(check + " ]", 455, y);
-            y = y + s;
-            g2d.setStroke(stroke1);
-            g2d.drawLine(x, y, 550, y);
-            y = y + s*2;
-            g2d.drawString("Dati relativi ad aspetti genetici", x, y);
-            g2d.drawString("[", 450, y);
-            check = (t.isDatiGenetici() ? "X" : String.valueOf(BLANK_SPACE) + String.valueOf(BLANK_SPACE) + String.valueOf(BLANK_SPACE)) ;
-            g2d.drawString(check + " ]", 455, y);
-            y = y + s;
-            g2d.setStroke(stroke1);
-            g2d.drawLine(x, y, 550, y);
-            y = y + s*2;
-            g2d.drawString("Dati biometrici", x, y);
-            g2d.drawString("[", 450, y);
-            check = (t.isDatiBiometrici() ? "X" : String.valueOf(BLANK_SPACE) + String.valueOf(BLANK_SPACE) + String.valueOf(BLANK_SPACE)) ;
-            g2d.drawString(check + " ]", 455, y);
-            y = y + s;
-            g2d.setStroke(stroke1);
-            g2d.drawLine(x, y, 550, y);
-            y = y + s*2;
-            g2d.drawString("Dati giudiziari", x, y);
-            g2d.drawString("[", 450, y);
-            check = (t.isDatiGiudiziari() ? "X" : String.valueOf(BLANK_SPACE) + String.valueOf(BLANK_SPACE) + String.valueOf(BLANK_SPACE)) ;
-            g2d.drawString(check + " ]", 455, y);
-            y = y + s;
-            g2d.setStroke(stroke1);
-            g2d.drawLine(x, y, 550, y);
-            y = y + s*2;
-            g2d.drawString("Dati relativi all\'ubicazione dei soggetti", x, y);
-            g2d.drawString("[", 450, y);
-            check = (t.isDatiUbicazione() ? "X" : String.valueOf(BLANK_SPACE) + String.valueOf(BLANK_SPACE) + String.valueOf(BLANK_SPACE)) ;
-            g2d.drawString(check + " ]", 455, y);
-            y = y + s;
-            g2d.setStroke(stroke1);
-            g2d.drawLine(x, y, 550, y);
-            y = y + s*2;
-            g2d.drawString("Dati pseudonimizzati", x, y);
-            g2d.drawString("[", 450, y);
-            check = (t.isDatiPseudonimizzati() ? "X" : String.valueOf(BLANK_SPACE) + String.valueOf(BLANK_SPACE) + String.valueOf(BLANK_SPACE)) ;
-            g2d.drawString(check + " ]", 455, y);
-            y = y + s;
-            g2d.setStroke(stroke1);
-            g2d.drawLine(x, y, 550, y);
-            y = y + s*2;
-            g2d.drawString("Dati anonimizzati", x, y);
-            g2d.drawString("[", 450, y);
-            check = (t.isDatiAnonimizzati() ? "X" : String.valueOf(BLANK_SPACE) + String.valueOf(BLANK_SPACE) + String.valueOf(BLANK_SPACE)) ;
-            g2d.drawString(check + " ]", 455, y);
+            g2d.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+            y = printKindOfData(g2d, t.isDatiPersonali(), stroke1, "Dati comuni", y + s);
+            y = printKindOfData(g2d, t.isDatiSanitari(), stroke1, "Dati sanitari", y + s);
+            y = printKindOfData(g2d, t.isDatiOrientamentoSex(), stroke1, "Dati relativi all\'orientamento sessuale", y + s);
+            y = printKindOfData(g2d, t.isDatiEtniaReligApp(), stroke1, "Dati relativi ad etnia, religione o appartenenza associativa", y + s);
+            y = printKindOfData(g2d, t.isDatiMinoreEta(), stroke1, "Dati relativi a soggetti minorenni", y + s);
+            y = printKindOfData(g2d, t.isDatiGenetici(), stroke1, "Dati relativi ad aspetti genetici", y + s);            
+            y = printKindOfData(g2d, t.isDatiBiometrici(), stroke1, "Dati biometrici", y + s);
+            y = printKindOfData(g2d, t.isDatiGiudiziari(), stroke1, "Dati giudiziari", y + s);
+            y = printKindOfData(g2d, t.isDatiUbicazione(), stroke1, "Dati relativi all\'ubicazione dei soggetti", y + s);
+            y = printKindOfData(g2d, t.isDatiPseudonimizzati(), stroke1, "Dati pseudonimizzati", y + s);
+            y = printKindOfData(g2d, t.isDatiAnonimizzati(), stroke1, "Dati anonimizzati", y + s);
             // Add the page to the document
             doc.addPage(page);
             return count;
@@ -824,13 +741,264 @@ public class DocWrapper extends DocumentGenerator implements Constants {
     }
  
     
-    public static void makeDetailPages (PageFormat pf,
-                                        PDFDocument doc,
-                                        ArrayList<ProcessingBean> list) 
-                                 throws AttributoNonValorizzatoException, CommandException {
+    /**
+     * Genera la pagina di descrizione delle categorie di destinatari 
+     * e dei termini ultimi per la cancellazione.
+     * 
+     * @param pf    formato della pagina
+     * @param doc   istanza di documento PDF
+     * @param t     oggetto contenente i dati del trattamento
+     * @return <code>int</code> - il valore raggiunto nella coordinata verticale (y)
+     * @throws CommandException se si verifica un problema nel recupero di una risorsa, di valori o in qualche altro tipo di puntamento
+     */
+    private static int makeExpireTimePage(PageFormat pf, 
+                                          PDFDocument doc,
+                                          ProcessingBean t)
+                                   throws CommandException {
+        int y = 180;
+        int s = 8;
+        try {
+            // Create a page in the document
+            PDFPage page = doc.createPage(pf);
+            // Create Graphics2D
+            Graphics2D g2d = page.createGraphics(); 
+            // Make the heder of the page
+            makeHeaderInternalPage(g2d, t);
+            // Draw a string            
+            g2d.setColor(Color.black);
+            g2d.setFont(new Font ("Helvetica", Font.BOLD, 14));
+            g2d.drawString("Categorie di destinatari a cui i dati vengono comunicati:", x, y);
+            String text = cleanHtml(t.getExtraInfos().getExtraInfo3());
+            String[] destAsArray = text.split(String.valueOf(HYPHEN));
+            g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
+            float[] dashingPattern1 = {1f, 1f};
+            Stroke stroke1 = new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, dashingPattern1, 2.0f);
+            for (int i = 0; i < destAsArray.length; i++) {
+                if (!destAsArray[i].equals(VOID_STRING)) {
+                    y += s;
+                    g2d.setStroke(stroke1);
+                    g2d.drawLine(x, y, 550, y);
+                    y = println("●" + destAsArray[i], x, y, s*2, g2d);
+                }
+            }
+            // Draw a string
+            g2d.setFont(new Font ("Helvetica", Font.BOLD, 14));
+            y = println("Termini ultimi previsti per la cancellazione:", x, y, s*5, g2d);
+            String[] textAsArray = wrapText(g2d, cleanHtml(t.getTerminiUltimi()), 600);
+            g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
+            for (int i = 0; i < textAsArray.length; i++) {
+                y = println(textAsArray[i], x, y, s*2, g2d);
+            }
+            // Add the page to the document
+            doc.addPage(page);
+            return y;
+        } catch (AttributoNonValorizzatoException anve) {
+            String msg = FOR_NAME + "Problema nel recupero di un attributo obbligatorio del bean.\n" + anve.getMessage();
+            log.severe(msg);
+            throw new CommandException(msg, anve);
+        } catch (IOException ioe) {
+            String msg = FOR_NAME + "Probabile problema nel puntamento a una risorsa esterna.\n" + ioe.getMessage();
+            log.severe(msg);
+            throw new CommandException(msg, ioe);
+        } catch (Exception e) {
+            String msg = FOR_NAME + "Problema in un metodo per la generazione di pagina pdf.\n" + e.getMessage();
+            log.severe(msg);
+            throw new CommandException(msg, e);
+        }
+    }
+
+    
+    /**
+     * Genera la pagina di descrizione delle misure di sicurezza tecniche ed organizzative.
+     * 
+     * @param pf    formato della pagina
+     * @param doc   istanza di documento PDF
+     * @param t     oggetto contenente i dati del trattamento
+     * @return <code>int</code> - l'indice corrente delle attivit&agrave; di trattamento stampate nella prima pagina, o il numero totale di esse se la stampa non ha ecceduto l'altezza di pagina
+     * @throws CommandException se si verifica un problema nel recupero di una risorsa, di valori o in qualche altro tipo di puntamento
+     */
+    private static void makeSecMeasurePage(PageFormat pf, 
+                                               PDFDocument doc,
+                                               ProcessingBean t)
+                                        throws CommandException {
+        int y = 180;
+        int s = 8;
+        try {
+            // Create a page in the document
+            PDFPage page = doc.createPage(pf);
+            // Create Graphics2D
+            Graphics2D g2d = page.createGraphics(); 
+            // Make the heder of the page
+            makeHeaderInternalPage(g2d, t);
+            // Draw a string            
+            g2d.setColor(Color.black);
+            g2d.setFont(new Font ("Helvetica", Font.BOLD, 14));
+            g2d.drawString("Descrizione generale delle misure di sicurezza tecniche ed organizzative:", x, y);
+            //String textWithList = t.getExtraInfos().getExtraInfo1().replaceAll("<li>", String.valueOf(HYPHEN));
+            String text = cleanHtml(t.getExtraInfos().getExtraInfo1());
+            String[] textAsArray = wrapText(g2d, text, 600);
+            g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
+            for (int i = 0; i < textAsArray.length; i++) {
+                y = println(textAsArray[i], x, y, s*2, g2d);
+            }
+            // Add the page to the document
+            doc.addPage(page);
+        } catch (AttributoNonValorizzatoException anve) {
+            String msg = FOR_NAME + "Problema nel recupero di un attributo obbligatorio del bean.\n" + anve.getMessage();
+            log.severe(msg);
+            throw new CommandException(msg, anve);
+        } catch (IOException ioe) {
+            String msg = FOR_NAME + "Probabile problema nel puntamento a una risorsa esterna.\n" + ioe.getMessage();
+            log.severe(msg);
+            throw new CommandException(msg, ioe);
+        } catch (Exception e) {
+            String msg = FOR_NAME + "Problema in un metodo per la generazione di pagina pdf.\n" + e.getMessage();
+            log.severe(msg);
+            throw new CommandException(msg, e);
+        }
+    }
+
+    
+    /**
+     * Genera la pagina dei luoghi di custodia e dei supporti di memorizzazione.
+     * 
+     * @param pf    formato della pagina
+     * @param doc   istanza di documento PDF
+     * @param t     oggetto contenente i dati del trattamento
+     * @param count numero di database di trattamento stampati nella pagina, oppure zero se la stampa non ha ecceduto l'altezza di pagina
+     * @return <code>int</code> - l'indice corrente dei database di trattamento stampate nella pagina, o zero se la stampa non ha ecceduto l'altezza di pagina
+     * @throws CommandException se si verifica un problema nel recupero di una risorsa, di valori o in qualche altro tipo di puntamento
+     */
+    private static int makeDBLocationPage(PageFormat pf, 
+                                          PDFDocument doc,
+                                          ProcessingBean t,
+                                          int count)
+                                   throws CommandException {
+        int y = 180;
+        int s = 8;
+        int pageHeight = 720;
+        int dbIndex = NOTHING;
+        try {
+            // Create a page in the document
+            PDFPage page = doc.createPage(pf);
+            // Create Graphics2D
+            Graphics2D g2d = page.createGraphics(); 
+            // Make the heder of the page
+            makeHeaderInternalPage(g2d, t);
+            // Draw a string
+            g2d.setColor(Color.black);
+            if (count == NOTHING) {
+                g2d.setFont(new Font ("Helvetica", Font.BOLD, 14));
+                g2d.drawString("Luoghi di custodia dei supporti di memorizzazione:", x, y);
+                // Draw to the page
+                String text = cleanHtml(t.getExtraInfos().getExtraInfo2());
+                String[] textAsArray = wrapText(g2d, text, 600);
+                g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
+                for (int i = 0; i < textAsArray.length; i++) {
+                    y = println(textAsArray[i], x, y, s*2, g2d);
+                }
+                g2d.setFont(new Font ("Helvetica", Font.BOLD, 14));
+                y = println("Database" + BLANK_SPACE + "(" + t.getBancheDati().size() + ")", x, y, s*5, g2d);
+            }
+            // Draw to the page
+            float[] dashingPattern1 = {1f, 1f};
+            Stroke stroke1 = new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, dashingPattern1, 2.0f);
+            ArrayList<ProcessBean> vDB = t.getBancheDati();
+            for (int i = count; i < vDB.size(); i++) {
+                ProcessBean db = vDB.get(i);
+                g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
+                y += s;
+                g2d.setStroke(stroke1);
+                g2d.drawLine(x, y, 550, y);
+                y += s*2;
+                if (y < pageHeight) {
+                    g2d.drawString(db.getNome() + " (" + db.getTipo() + ")", x, y);
+                } else {
+                    dbIndex = i;
+                    break;
+                }
+            }
+            // Add the page to the document
+            doc.addPage(page);
+            return dbIndex;
+        } catch (AttributoNonValorizzatoException anve) {
+            String msg = FOR_NAME + "Problema nel recupero di un attributo obbligatorio del bean.\n" + anve.getMessage();
+            log.severe(msg);
+            throw new CommandException(msg, anve);
+        } catch (IOException ioe) {
+            String msg = FOR_NAME + "Probabile problema nel puntamento a una risorsa esterna.\n" + ioe.getMessage();
+            log.severe(msg);
+            throw new CommandException(msg, ioe);
+        } catch (Exception e) {
+            String msg = FOR_NAME + "Problema in un metodo per la generazione di pagina pdf.\n" + e.getMessage();
+            log.severe(msg);
+            throw new CommandException(msg, e);
+        }
+    }
+ 
+    
+    /**
+     * Genera la pagina di descrizione di uleriori informazioni.
+     * 
+     * @param pf    formato della pagina
+     * @param doc   istanza di documento PDF
+     * @param t     oggetto contenente i dati del trattamento
+     * @throws CommandException se si verifica un problema nel recupero di una risorsa, di valori o in qualche altro tipo di puntamento
+     */
+    private static void makeExtraInfosPage(PageFormat pf, 
+                                               PDFDocument doc,
+                                               ProcessingBean t)
+                                        throws CommandException {
+        int y = 180;
+        int s = 8;
+        try {
+            // Create a page in the document
+            PDFPage page = doc.createPage(pf);
+            // Create Graphics2D
+            Graphics2D g2d = page.createGraphics(); 
+            // Make the heder of the page
+            makeHeaderInternalPage(g2d, t);
+            // Draw a string            
+            g2d.setColor(Color.black);
+            g2d.setFont(new Font ("Helvetica", Font.BOLD, 14));
+            g2d.drawString("Ulteriori informazioni:", x, y);
+            String text = cleanHtml(t.getExtraInfo());
+            String[] textAsArray = wrapText(g2d, text, 600);
+            g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
+            for (int i = 0; i < textAsArray.length; i++) {
+                y = println(textAsArray[i], x, y, s*2, g2d);
+            }
+            // Add the page to the document
+            doc.addPage(page);
+        } catch (AttributoNonValorizzatoException anve) {
+            String msg = FOR_NAME + "Problema nel recupero di un attributo obbligatorio del bean.\n" + anve.getMessage();
+            log.severe(msg);
+            throw new CommandException(msg, anve);
+        } catch (IOException ioe) {
+            String msg = FOR_NAME + "Probabile problema nel puntamento a una risorsa esterna.\n" + ioe.getMessage();
+            log.severe(msg);
+            throw new CommandException(msg, ioe);
+        } catch (Exception e) {
+            String msg = FOR_NAME + "Problema in un metodo per la generazione di pagina pdf.\n" + e.getMessage();
+            log.severe(msg);
+            throw new CommandException(msg, e);
+        }
+    }
+    
+
+    public static void makePages (PageFormat pf,
+                                  PDFDocument doc,
+                                  ArrayList<ProcessingBean> list) 
+                           throws AttributoNonValorizzatoException, 
+                                  CommandException {
         ArrayList<ProcessingBean> vT = null;
         ArrayList<ProcessingBean> vR = null;
         try {
+            // 1. Ambito di applicazione
+            makeFirstPage(pf, doc);
+            // 2. Dati di Contatto
+            makeSecondPage(pf, doc);
+            // Altre pagine
             if (list.size() > ELEMENT_LEV_1) {
                 vT = split(list, TITOLARE);
                 vR = split(list, RESPONSABILE);
@@ -838,45 +1006,27 @@ public class DocWrapper extends DocumentGenerator implements Constants {
                 makeIntermediatePage(pf, doc, "3. Elenco dei trattamenti come Titolare", "Titolare");
                 // Elenco trattamenti da titolare
                 for (ProcessingBean t : vT) {
-                    int count = makeProcessingPage(pf, doc, t);
-                    if (count > NOTHING) {
-                        count = makeActivitiesPage(pf, doc, t, count);
-                        if (count > NOTHING) {
-                            makeActivitiesPage(pf, doc, t, count);
-                        }
-                    }
-                    makeLegalBasisPage(pf, doc, t);
-                    makeKindataPage(pf, doc, t);
+                    printPages(pf, doc, t);
                 }
                 // Pagina introduttiva elenco trattamenti da responsabile
-                makeIntermediatePage(pf, doc, "3. Elenco dei trattamenti come Responsabile", "Responsabile");
+                makeIntermediatePage(pf, doc, "4. Elenco dei trattamenti come Responsabile", "Responsabile");
                 // Elenco trattamenti da responsabile
                 for (ProcessingBean t : vR) {
-                    int count = makeProcessingPage(pf, doc, t);
-                    if (count > NOTHING) {
-                        makeActivitiesPage(pf, doc, t, count);
-                    }
-                    makeLegalBasisPage(pf, doc, t);
-                    makeKindataPage(pf, doc, t);
+                    printPages(pf, doc, t);
                 }
             } else {
                 // C'è un solo trattamento
                 ProcessingBean t = list.get(0);
-                int count = makeProcessingPage(pf, doc, t);
-                if (count > NOTHING) {
-                    count = makeActivitiesPage(pf, doc, t, count);
-                    if (count > NOTHING) {
-                        makeActivitiesPage(pf, doc, t, count);
-                    }
-                }
-                makeLegalBasisPage(pf, doc, t);
-                makeKindataPage(pf, doc, t);
+                printPages(pf, doc, t);
             }
-            
         } catch (AttributoNonValorizzatoException anve) {
             String msg = FOR_NAME + "Problema nel recupero del codice del trattamento nel metodo per la generazione della pagina pdf.\n" + anve.getMessage();
             log.severe(msg);
             throw anve;
+        } catch (CommandException ce) {
+            String msg = FOR_NAME + "Problema nella generazione delle pagine pdf.\n" + ce.getMessage();
+            log.severe(msg);
+            throw ce;
         } catch (IOException ioe) {
             String msg = FOR_NAME + "Probabile problema nel puntamento a una risorsa esterna.\n" + ioe.getMessage();
             log.severe(msg);
@@ -886,6 +1036,32 @@ public class DocWrapper extends DocumentGenerator implements Constants {
             log.severe(msg);
             throw new CommandException(msg, e);
         }
+    }
+    
+    
+    private static void printPages(PageFormat pf,
+                                   PDFDocument doc,
+                                   ProcessingBean t) 
+                            throws CommandException {
+        int count = makeProcessingPage(pf, doc, t);
+        if (count > NOTHING) {
+            count = makeActivitiesPage(pf, doc, t, count);
+            if (count > NOTHING) {
+                makeActivitiesPage(pf, doc, t, count);
+            }
+        }
+        makeLegalBasisPage(pf, doc, t);
+        makeKindOfDataPage(pf, doc, t);
+        makeExpireTimePage(pf, doc, t);
+        makeSecMeasurePage(pf, doc, t);
+        count = makeDBLocationPage(pf, doc, t, NOTHING);
+        if (count > NOTHING) {
+            count = makeDBLocationPage(pf, doc, t, count);
+            if (count > NOTHING) {
+                makeDBLocationPage(pf, doc, t, count);
+            }
+        }
+        makeExtraInfosPage(pf, doc, t);
     }
     
     
