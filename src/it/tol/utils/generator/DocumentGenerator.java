@@ -39,6 +39,7 @@ import java.awt.print.Paper;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
 
@@ -148,22 +149,116 @@ public class DocumentGenerator implements Constants {
      * La pagina di un documento PDF pu&ograve; essere vista, infatti, come un piano 
      * (della geometria/algebra lineare) e in questo senso bisogna calcolare le coordinate
      * x e y per ogni posizionamento di testo si voglia fare nella pagina stessa.
-     * 
+     * @param graph2D   l'oggetto Graphics2D in cui impostare la stampa
      * @param content   la String da stampare
-     * @param x         la coordinata orizzontale in cui iniziare il posizionamento orizzontale della String
-     * @param y         la coordinata verticale relativa all'ultimo posizionamento prima del corrente; se non ci sono stampe precedenti, corrisponde all'inizializzazione della coordinata y
+     * @param x1        la coordinata orizzontale in cui iniziare il posizionamento orizzontale della String
+     * @param y1        la coordinata verticale relativa all'ultimo posizionamento prima del corrente; se non ci sono stampe precedenti, corrisponde all'inizializzazione della coordinata y
      * @param increment l'incremento cui sottoporre la coordinata verticale (y)
-     * @param g         l'oggetto Graphics2D in cui impostare la stampa
+     * 
      * @return <code>int</code> - il valore della coordinata y incrementata dell'incremento i: corrisponde al valore della coordinata verticale in base alla quale è stata stampata la stringa String
      */
-    public static int println(String content, 
-                              int x, 
-                              int y, 
-                              int increment, 
-                              Graphics2D g) {
-        int newY = y + increment;
-        g.drawString(content, x, newY);
+    public static int println(Graphics2D graph2D, 
+                              String content, 
+                              int x1, 
+                              int y1, 
+                              int increment) {
+        int newY = y1 + increment;
+        graph2D.drawString(content, x1, newY);
         return newY;
+    }
+    
+    
+    /**
+     * Il metodo length() di String restituisce un valore espresso in unicode code units
+     * Facciamo conto che la larghezza stampabile nella pagina sia di 80 colonne,
+     * e quindi di 80 Unicode Code Units.
+     * Siccome sappiamo che la larghezza stampabile è di 600 pixel,
+     * ricaviamo il rapporto tra pixel e punti dividendo pixel / punti,
+     * ovvero nel caso specifico 600 / 80 = 7.5
+     * Quindi per calcolare la larghezza massima in Unicode Code Units
+     * dobbiamo dividere width per 7.5 oppure moltiplicare content.length per 7.5 
+     */
+    public static int println(Graphics2D graph2D, 
+                              String row, 
+                              int x1, 
+                              int y1, 
+                              int increment, 
+                              int width) {
+        // Calcola la nuova ordinata (riferimento per la successiva riga)
+        int y2 = y1 + increment;
+        // Trasforma la larghezza dell'area stampabile (espressa in pixel) in Unicode Code Units
+        double printableArea = (width / 7.5);
+        // La stringa corrente corrisponde a una riga di testo: la misura (valore espresso in Unicode Code Units)
+        double rowLength = row.length();
+        // Cerca la fine della prima parola
+        int position = row.indexOf(" ", NOTHING); int position2 = NOTHING;
+        // Crea uno StringBuilder a partire dalla riga
+        StringBuilder sb = new StringBuilder(row);
+        
+        String row3 = row;
+        
+        // Se la lunghezza della riga è minore della larghezza limite
+        if (rowLength < printableArea) {
+            
+            // Aggiunge uno spazio extra dopo la parola
+            sb.insert(position, " ");
+            String row2 = sb.toString();
+            // Ricalcola la lunghezza della riga modificata 
+            rowLength = row2.length();
+            // Misura un'altra volta la riga: se è ancora minore della larghezza
+            while (rowLength < printableArea) {
+                position += 3;
+                // Cerca la fine della parola successiva
+                position2 = row2.indexOf(" ", position);
+                // Controlla il caso in cui il carattere non sia stato trovato
+                if (position2 == DEFAULT_ID) {
+                    break;
+                }
+                // Aggiunge uno spazio extra dopo la parola ‎successiva
+                sb = new StringBuilder(row2);
+                sb.insert(position2, "  ");
+                row3 = sb.toString();
+                // Se la stringa è finita esce
+                if (position2 >= row.length()) {
+                    break;
+                }
+                // Altrimenti prepara le variabili per rientrare
+                position = position2;
+                row2 = row3;
+                // Misura un'altra volta la riga: etc. etc.
+                rowLength = row3.length();
+            }
+            
+        }
+        
+        // Agginge uno spazio extra dopo la seconda parola
+        
+        // ...e così via
+        
+       /*        StringBuffer content = new StringBuffer();
+        int textRowWidth = textRow.length();
+        
+        if (textRowWidth*7 < width) {
+            // Spezza la riga in parole
+            String[] words = textRow.split(" ");
+            for (int i = 0; i < words.length; i++) {
+                content.append(words[i]).append(" ");
+                if (String.valueOf(content).length()*7 < width) {
+                    content.append("   ");
+                }
+                //textRow = String.valueOf(content);
+                //textRowWidth = textRow.length();
+                if (textRowWidth*7 > width)
+                    break;
+            }
+             * StringTokenizer st = new StringTokenizer(textRow);
+            for (int i = 1; i < st.countTokens() - 2; i++) {
+               content.append(st.nextToken()).append(" ");
+            }
+        }*/
+    
+        graph2D.drawString(row3, x1, y2);
+        return y2;
     }
     
     
@@ -255,7 +350,10 @@ public class DocumentGenerator implements Constants {
                           .replaceAll("&ldquo;", "‟")
                           .replaceAll("&rdquo;", "”")
                           .replaceAll("&agrave;", "à")
-                          .replaceAll("&egrave;", "è");
+                          .replaceAll("&egrave;", "è")
+                          .replaceAll("&igrave;", "ì")
+                          .replaceAll("&ograve;", "ò")
+                          .replaceAll("&ugrave;", "ù");
         return text;
     }
     
