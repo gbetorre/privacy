@@ -35,13 +35,19 @@ package it.tol.wrapper;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.io.IOException;
+import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -51,6 +57,7 @@ import com.qoppa.pdfWriter.PDFPage;
 import it.tol.Data;
 import it.tol.bean.ActivityBean;
 import it.tol.bean.CodeBean;
+import it.tol.bean.ItemBean;
 import it.tol.bean.ProcessBean;
 import it.tol.bean.ProcessingBean;
 import it.tol.exception.AttributoNonValorizzatoException;
@@ -163,39 +170,39 @@ public class DocWrapper extends DocumentGenerator implements Constants {
         g2d.setFont(new Font("Helvetica", Font.BOLD, 14));
         g2d.drawString("1. Ambito di applicazione", x, y);
         g2d.setFont(new Font("Arial", Font.PLAIN, 11));
-        y = println("L’art. 30 del Regolamento UE n. 2016/679 (a seguire: GDPR) prevede che le imprese od", x, y, i, g2d);
-        y = println("organizzazioni con un numero uguale o superiore a 250 dipendenti devono adottare e tenere", x, y, i, g2d);
-        y = println("aggiornato un", x, y, i, g2d);
+        y = println(g2d, "L’art. 30 del Regolamento UE n. 2016/679 (a seguire: GDPR) prevede che le imprese od", x, y, i);
+        y = println(g2d, "organizzazioni con un numero uguale o superiore a 250 dipendenti devono adottare e tenere", x, y, i);
+        y = println(g2d, "aggiornato un", x, y, i);
         g2d.setFont(new Font("Arial", Font.BOLD, 11));
-        println("Registro delle Attività di Trattamento.", 150, y, NOTHING, g2d);
+        println(g2d, "Registro delle Attività di Trattamento.", 150, y, NOTHING);
         g2d.setFont(new Font("Arial", Font.PLAIN, 11));
-        y = println("Tale obbligo non si applica alle pubbliche amministrazioni, salvo che i trattamenti che esse", x, y, i, g2d);
-        y = println("effettuano possano presentare un rischio per i diritti e le libertà dell’interessato, non siano", x, y, i, g2d);
-        y = println("occasionali o includano categorie particolari di dati (GDPR, art. 9, par. 1: dati che rivelino", x, y, i, g2d);
-        y = println("l’origine razziale o etnica, le opinioni politiche, le convinzioni religiose o filosofiche,", x, y, i, g2d);
-        y = println("o l’appartenenza sindacale, dati genetici, dati biometrici intesi a identificare in modo univoco una", x, y, i, g2d);
-        y = println("persona fisica, dati relativi alla salute o alla vita sessuale o all’orientamento sessuale della", x, y, i, g2d);
-        y = println("persona) o dati personali relativi a condanne penali.", x, y, i, g2d);
-        y = println("Preso atto che l'Università di Verona:", x, y, i*2, g2d);
+        y = println(g2d, "Tale obbligo non si applica alle pubbliche amministrazioni, salvo che i trattamenti che esse", x, y, i);
+        y = println(g2d, "effettuano possano presentare un rischio per i diritti e le libertà dell’interessato, non siano", x, y, i);
+        y = println(g2d, "occasionali o includano categorie particolari di dati (GDPR, art. 9, par. 1: dati che rivelino", x, y, i);
+        y = println(g2d, "l’origine razziale o etnica, le opinioni politiche, le convinzioni religiose o filosofiche,", x, y, i);
+        y = println(g2d, "o l’appartenenza sindacale, dati genetici, dati biometrici intesi a identificare in modo univoco una", x, y, i);
+        y = println(g2d, "persona fisica, dati relativi alla salute o alla vita sessuale o all’orientamento sessuale della", x, y, i);
+        y = println(g2d, "persona) o dati personali relativi a condanne penali.", x, y, i);
+        y = println(g2d, "Preso atto che l'Università di Verona:", x, y, i*2);
         // <ul>
         BufferedImage bullet = getImage("ico-check.png");
         // li
         g2d.drawImage(bullet, x, 390, w, h, null);
         int x1 = getCoordinate(x, i);
-        y = println("ha più di 250 dipendenti;", x1, y, i, g2d);
+        y = println(g2d, "ha più di 250 dipendenti;", x1, y, i);
         // li
         g2d.drawImage(bullet, x, 410, w, h, null);
-        y = println("effettua trattamenti che presentano rischio per i diritti e le libertà dell’interessato;", x1, y, i, g2d);
+        y = println(g2d, "effettua trattamenti che presentano rischio per i diritti e le libertà dell’interessato;", x1, y, i);
         // li
         g2d.drawImage(bullet, x, 430, w, h, null);
-        y = println("effettua trattamenti che includono le categorie particolari di dati di cui al GDPR, art. 9, par. 1;", x1, y, i, g2d);
+        y = println(g2d, "effettua trattamenti che includono le categorie particolari di dati di cui al GDPR, art. 9, par. 1;", x1, y, i);
         // li
         g2d.drawImage(bullet, x, 450, w, h, null);
-        y = println("effettua trattamenti che riguardano dati personali relativi a condanne penali,", x1, y, i, g2d);
+        y = println(g2d, "effettua trattamenti che riguardano dati personali relativi a condanne penali,", x1, y, i);
         // </ul>
-        y = println("l'Università è tenuta ad adottare un Registro delle Attività di Trattamento per fornire ai terzi", x, y, i*2, g2d);
-        y = println("evidenza dell’analisi dei Trattamenti effettuati, motivando le misure intraprese sulla scorta dei rischi", x, y, i, g2d);
-        y = println("gravanti su di essi, secondo il principio di Responsabilizzazione o ", x, y, i, g2d);
+        y = println(g2d, "l'Università è tenuta ad adottare un Registro delle Attività di Trattamento per fornire ai terzi", x, y, i*2);
+        y = println(g2d, "evidenza dell’analisi dei Trattamenti effettuati, motivando le misure intraprese sulla scorta dei rischi", x, y, i);
+        y = println(g2d, "gravanti su di essi, secondo il principio di Responsabilizzazione o ", x, y, i);
         g2d.setFont(new Font ("Arial", Font.ITALIC, 11));
         g2d.drawString("Accountability.", getCoordinate(x, 320), y);
         doc.addPage(page);
@@ -226,19 +233,19 @@ public class DocWrapper extends DocumentGenerator implements Constants {
         g2d.drawString("2. Dati di Contatto", x, y);
         // Text
         g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
-        y = println("In merito al trattamento dei dati effettuato come Titolare e/o come Responsabile, è necessario", x, y, i, g2d);
-        y = println("specificare i dati di contatto:", x, y, i, g2d);
+        y = println(g2d, "In merito al trattamento dei dati effettuato come Titolare e/o come Responsabile, è necessario", x, y, i);
+        y = println(g2d, "specificare i dati di contatto:", x, y, i);
         g2d.setFont(new Font ("Arial", Font.BOLD, 11));
-        y = println("GDPR, art. 30 1a) il nome e i dati di contatto del titolare del trattamento e, ove applicabile,", x, y, i, g2d);
-        y = println("del contitolare del trattamento, del rappresentante del titolare del trattamento e del", x, y, i, g2d);
-        y = println("responsabile della protezione dei dati;", x, y, i, g2d); 
+        y = println(g2d, "GDPR, art. 30 1a) il nome e i dati di contatto del titolare del trattamento e, ove applicabile,", x, y, i);
+        y = println(g2d, "del contitolare del trattamento, del rappresentante del titolare del trattamento e del", x, y, i);
+        y = println(g2d, "responsabile della protezione dei dati;", x, y, i); 
         g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
-        y = println("Qualora il titolare svolga trattamenti anche in qualità di Responsabile si applica:", x, y, i*2, g2d);
+        y = println(g2d, "Qualora il titolare svolga trattamenti anche in qualità di Responsabile si applica:", x, y, i*2);
         g2d.setFont(new Font ("Arial", Font.BOLD, 11));
-        y = println("GDPR, art. 30 2a) il nome e i dati di contatto del responsabile o dei responsabili del", x, y, i, g2d);
-        y = println("trattamento, di ogni titolare del trattamento per conto del quale agisce il responsabile del", x, y, i, g2d);
-        y = println("trattamento, del rappresentante del titolare del trattamento o del responsabile del", x, y, i, g2d);
-        y = println("trattamento e, ove applicabile, del responsabile della protezione dei dati.", x, y, i, g2d);
+        y = println(g2d, "GDPR, art. 30 2a) il nome e i dati di contatto del responsabile o dei responsabili del", x, y, i);
+        y = println(g2d, "trattamento, di ogni titolare del trattamento per conto del quale agisce il responsabile del", x, y, i);
+        y = println(g2d, "trattamento, del rappresentante del titolare del trattamento o del responsabile del", x, y, i);
+        y = println(g2d, "trattamento e, ove applicabile, del responsabile della protezione dei dati.", x, y, i);
         // Make a rectangle 
         g2d.drawRoundRect(x, 398, 450, 152, 2, 2);
         g2d.setColor(Color.LIGHT_GRAY);
@@ -251,35 +258,35 @@ public class DocWrapper extends DocumentGenerator implements Constants {
         g2d.fillRect(302, 400, 226, i);
         g2d.setColor(Color.black);
         g2d.drawString("DATI DI CONTATTO", 324, 415);
-        y = println("Titolare del Trattamento", getCoordinate(x, i), y, i*4, g2d);
+        y = println(g2d, "Titolare del Trattamento", getCoordinate(x, i), y, i*4);
         g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
-        y = println("Università degli Studi di Verona", getCoordinate(x, i*11), y, NOTHING, g2d);
-        y = println("Via dell’Artigliere n. 8", getCoordinate(x, i*11), y, i, g2d);
+        y = println(g2d, "Università degli Studi di Verona", getCoordinate(x, i*11), y, NOTHING);
+        y = println(g2d, "Via dell’Artigliere n. 8", getCoordinate(x, i*11), y, i);
         g2d.setFont(new Font ("Arial", Font.ITALIC, 11));
-        y = println("Nota: contatti validi anche qualora", getCoordinate(x, i), y, i, g2d);
+        y = println(g2d, "Nota: contatti validi anche qualora", getCoordinate(x, i), y, i);
         g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
-        y = println("CAP 37129   - Verona", getCoordinate(x, i*11), y, NOTHING, g2d);
-        y = println("C.F: 93009870234 – P.I. 0154104023", getCoordinate(x, i*11), y, i, g2d);
+        y = println(g2d, "CAP 37129   - Verona", getCoordinate(x, i*11), y, NOTHING);
+        y = println(g2d, "C.F: 93009870234 – P.I. 0154104023", getCoordinate(x, i*11), y, i);
         g2d.setFont(new Font ("Arial", Font.ITALIC, 11));
         g2d.drawString("il titolare agisca come Responsabile", getCoordinate(x, i), y);
         g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
-        y = println("Tel. 0458028777", getCoordinate(x, i*11), y, i, g2d);
-        y = println("E-mail: privacy@ateneo.univr.it", getCoordinate(x, i*11), y, i, g2d);
+        y = println(g2d, "Tel. 0458028777", getCoordinate(x, i*11), y, i);
+        y = println(g2d, "E-mail: privacy@ateneo.univr.it", getCoordinate(x, i*11), y, i);
         y += i/2;
         g2d.drawRoundRect(x, y, 450, 155, 2, 2);
         g2d.setFont(new Font ("Arial", Font.BOLD, 11));
-        y = println("Responsabile della Protezione", getCoordinate(x, i), y, i, g2d);
+        y = println(g2d, "Responsabile della Protezione", getCoordinate(x, i), y, i);
         g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
         g2d.drawString("GL CONSULTING S.R.L.", getCoordinate(x, i*11), y);
         g2d.setFont(new Font ("Arial", Font.BOLD, 11));
-        y = println("dei Dati (DPO)", getCoordinate(x, i), y, i, g2d);
+        y = println(g2d, "dei Dati (DPO)", getCoordinate(x, i), y, i);
         g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
         g2d.drawString("Soggetto individuato quale referente", getCoordinate(x, i*11), y);
-        y = println(" per il titolare:", getCoordinate(x, i*11), y, i, g2d);
-        y = println("Gianluca Lombardi", getCoordinate(x, i*11), y, i, g2d);
-        y = println("Tel. 0312242323 / 3482345012", getCoordinate(x, i*11), y, i, g2d);
-        y = println("E-mail: info@gianlucalombardi.com", getCoordinate(x, i*11), y, i, g2d);
-        println("PEC: gianluca.lombardi@ingpec.eu", getCoordinate(x, i*11), y, i, g2d);
+        y = println(g2d, " per il titolare:", getCoordinate(x, i*11), y, i);
+        y = println(g2d, "Gianluca Lombardi", getCoordinate(x, i*11), y, i);
+        y = println(g2d, "Tel. 0312242323 / 3482345012", getCoordinate(x, i*11), y, i);
+        y = println(g2d, "E-mail: info@gianlucalombardi.com", getCoordinate(x, i*11), y, i);
+        println(g2d, "PEC: gianluca.lombardi@ingpec.eu", getCoordinate(x, i*11), y, i);
         doc.addPage(page);
     }
     
@@ -338,11 +345,11 @@ public class DocWrapper extends DocumentGenerator implements Constants {
         // Draw a string
         g.setFont(new Font ("Helvetica", Font.BOLD, 14));
         g.setColor(Color.white);
-        y = println("Codice" + BLANK_SPACE + COLON + BLANK_SPACE + t.getCodice(), x, y, s*3, g);
+        y = println(g, "Codice" + BLANK_SPACE + COLON + BLANK_SPACE + t.getCodice(), x, y, s*3);
         y += s;
         String[] titleAsArray = wrapText(g, t.getNome(), width);
         for (int i = 0; i < titleAsArray.length; i++) {
-            y = println(titleAsArray[i], x, y, s*2, g);
+            y = println(g, titleAsArray[i], x, y, s*2);
         }
     }
     
@@ -371,11 +378,11 @@ public class DocWrapper extends DocumentGenerator implements Constants {
         // Draw a round border to the rectangle
         g.setStroke(new BasicStroke(6));
         // Draw a string
-        y = println("Codice" + BLANK_SPACE + COLON + BLANK_SPACE + t.getCodice(), x, y, s*3, g);
+        y = println(g, "Codice" + BLANK_SPACE + COLON + BLANK_SPACE + t.getCodice(), x, y, s*3);
         y += s;
         String[] titleAsArray = wrapText(g, t.getNome(), width);
         for (int i = 0; i < titleAsArray.length; i++) {
-            y = println(titleAsArray[i], x, y, s*2, g);
+            y = println(g, titleAsArray[i], x, y, s*2);
         }
         return y;
     }
@@ -414,7 +421,7 @@ public class DocWrapper extends DocumentGenerator implements Constants {
                 String[] textAsArray = wrapText(g2d, text, 600);
                 g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
                 for (int i = 0; i < textAsArray.length; i++) {
-                    y = println(textAsArray[i], x, y, s*2, g2d);
+                    y = println(g2d, textAsArray[i], x, y, s*2);
                 }
             }
             // Attività di trattamento
@@ -430,7 +437,7 @@ public class DocWrapper extends DocumentGenerator implements Constants {
             for (int i = 0; i < vA.size(); i++) {
                 ActivityBean a = vA.get(i);
                 String text = a.getNome();
-                String[] textAsArray = wrapText(g2d, text, 450);
+                String[] textAsArray = wrapText(g2d, text, 540);
                 y += s;
                 g2d.setStroke(stroke1);
                 g2d.drawLine(x, y, 550, y);
@@ -508,7 +515,7 @@ public class DocWrapper extends DocumentGenerator implements Constants {
             for (int i = count; i < vA.size(); i++) {
                 ActivityBean a = vA.get(i);
                 String text = a.getNome();
-                String[] textAsArray = wrapText(g2d, text, 450);
+                String[] textAsArray = wrapText(g2d, text, 540);
                 g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
                 y += s;
                 g2d.setStroke(stroke1);
@@ -579,17 +586,17 @@ public class DocWrapper extends DocumentGenerator implements Constants {
             String[] textAsArray = wrapText(g2d, text, 600);
             g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
             for (int i = 0; i < textAsArray.length; i++) {
-                y = println(textAsArray[i], x, y, s*2, g2d);
+                y = println(g2d, textAsArray[i], x, y, s*2);
             }
             g2d.setFont(new Font ("Helvetica", Font.BOLD, 14));
-            y = println("Basi giuridiche" + BLANK_SPACE + "(" + t.getBasiGiuridiche().size() + ")", x, y, s*5, g2d);
+            y = println(g2d, "Basi giuridiche" + BLANK_SPACE + "(" + t.getBasiGiuridiche().size() + ")", x, y, s*5);
             // Draw to the page
             float[] dashingPattern1 = {1f, 1f};
             Stroke stroke1 = new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, dashingPattern1, 2.0f);
             ArrayList<ActivityBean> vB = t.getBasiGiuridiche();
             for (int i = 0; i < vB.size(); i++) {
                 ActivityBean base = vB.get(i);
-                textAsArray = wrapText(g2d, base.getNome(), 450);
+                textAsArray = wrapText(g2d, base.getNome(), 540);
                 g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
                 y += s;
                 g2d.setStroke(stroke1);
@@ -610,11 +617,11 @@ public class DocWrapper extends DocumentGenerator implements Constants {
                     g2d.drawString("(DATI PARTICOLARI)", x, y);
                 }
                 g2d.setFont(new Font ("Arial", Font.ITALIC, 11));
-                y = println(base.getDescrizione(), x, y, s*2, g2d);
+                y = println(g2d, base.getDescrizione(), x, y, s*2);
                 if (base.getInformativa() != null && !base.getInformativa().equals(VOID_STRING)) {
                     String[] informativa = wrapText(g2d, base.getInformativa(), 450);
                     for (int j = 0; j < informativa.length; j++) {
-                        y = println(informativa[j], x, y, s*2, g2d);
+                        y = println(g2d, informativa[j], x, y, s*2);
                     }
                 }
             }
@@ -657,7 +664,7 @@ public class DocWrapper extends DocumentGenerator implements Constants {
         int s = 8;
         g.setStroke(stroke);
         g.drawLine(x, y, 550, y);
-        y = println(label, x, y, s*2, g);
+        y = println(g, label, x, y, s*2);
         String check = (flag ? "[X]" : "[ ]") ;
         g.drawString(check, 524, y);
         return y;
@@ -702,13 +709,13 @@ public class DocWrapper extends DocumentGenerator implements Constants {
                 y += s;
                 g2d.setStroke(stroke1);
                 g2d.drawLine(x, y, 550, y);
-                y = println(subj.getNome() + " (" + subj.getInformativa() + ")", x, y, s*2, g2d);
+                y = println(g2d, subj.getNome() + " (" + subj.getInformativa() + ")", x, y, s*2);
                 //g2d.setFont(new Font ("Arial", Font.ITALIC, 11));
                 //y = println("(" + subj.getInformativa() + ")", x, y, s*2, g2d);
             }
             // Draw a string
             g2d.setFont(new Font ("Helvetica", Font.BOLD, 14));
-            y = println("Descrizione delle categorie di dati personali", x, y, s*5, g2d);
+            y = println(g2d, "Descrizione delle categorie di dati personali", x, y, s*5);
             // Draw to the page
             g2d.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
             y = printKindOfData(g2d, t.isDatiPersonali(), stroke1, "Dati comuni", y + s);
@@ -778,16 +785,16 @@ public class DocWrapper extends DocumentGenerator implements Constants {
                     y += s;
                     g2d.setStroke(stroke1);
                     g2d.drawLine(x, y, 550, y);
-                    y = println("●" + destAsArray[i], x, y, s*2, g2d);
+                    y = println(g2d, "●" + destAsArray[i], x, y, s*2);
                 }
             }
             // Draw a string
             g2d.setFont(new Font ("Helvetica", Font.BOLD, 14));
-            y = println("Termini ultimi previsti per la cancellazione:", x, y, s*5, g2d);
+            y = println(g2d, "Termini ultimi previsti per la cancellazione:", x, y, s*5);
             String[] textAsArray = wrapText(g2d, cleanHtml(t.getTerminiUltimi()), 600);
             g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
             for (int i = 0; i < textAsArray.length; i++) {
-                y = println(textAsArray[i], x, y, s*2, g2d);
+                y = println(g2d, textAsArray[i], x, y, s*2);
             }
             // Add the page to the document
             doc.addPage(page);
@@ -814,13 +821,12 @@ public class DocWrapper extends DocumentGenerator implements Constants {
      * @param pf    formato della pagina
      * @param doc   istanza di documento PDF
      * @param t     oggetto contenente i dati del trattamento
-     * @return <code>int</code> - l'indice corrente delle attivit&agrave; di trattamento stampate nella prima pagina, o il numero totale di esse se la stampa non ha ecceduto l'altezza di pagina
      * @throws CommandException se si verifica un problema nel recupero di una risorsa, di valori o in qualche altro tipo di puntamento
      */
     private static void makeSecMeasurePage(PageFormat pf, 
-                                               PDFDocument doc,
-                                               ProcessingBean t)
-                                        throws CommandException {
+                                           PDFDocument doc,
+                                           ProcessingBean t)
+                                    throws CommandException {
         int y = 180;
         int s = 8;
         try {
@@ -836,11 +842,19 @@ public class DocWrapper extends DocumentGenerator implements Constants {
             g2d.drawString("Descrizione generale delle misure di sicurezza tecniche ed organizzative:", x, y);
             //String textWithList = t.getExtraInfos().getExtraInfo1().replaceAll("<li>", String.valueOf(HYPHEN));
             String text = cleanHtml(t.getExtraInfos().getExtraInfo1());
-            String[] textAsArray = wrapText(g2d, text, 600);
+            String[] textAsArray = wrapText(g2d, text, 740);
             g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
             for (int i = 0; i < textAsArray.length; i++) {
-                y = println(textAsArray[i], x, y, s*2, g2d);
+                String row = textAsArray[i];
+                int rowLength = row.length();
+                if (rowLength > 84)
+                    y = println(g2d, row, x, y, s*2);
+                else
+                    y = println(g2d, row, x, y, s*2, 680);
             }
+            //drawString(g2d, text, x, y, 450);
+            //y = println(g2d, text, x, y, s*2, true);
+            
             // Add the page to the document
             doc.addPage(page);
         } catch (AttributoNonValorizzatoException anve) {
@@ -869,7 +883,7 @@ public class DocWrapper extends DocumentGenerator implements Constants {
      * @return <code>int</code> - l'indice corrente dei database di trattamento stampate nella pagina, o zero se la stampa non ha ecceduto l'altezza di pagina
      * @throws CommandException se si verifica un problema nel recupero di una risorsa, di valori o in qualche altro tipo di puntamento
      */
-    private static int makeDBLocationPage(PageFormat pf, 
+    private static int[] makeDBLocationPage(PageFormat pf, 
                                           PDFDocument doc,
                                           ProcessingBean t,
                                           int count)
@@ -895,10 +909,10 @@ public class DocWrapper extends DocumentGenerator implements Constants {
                 String[] textAsArray = wrapText(g2d, text, 600);
                 g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
                 for (int i = 0; i < textAsArray.length; i++) {
-                    y = println(textAsArray[i], x, y, s*2, g2d);
+                    y = println(g2d, textAsArray[i], x, y, s*2);
                 }
                 g2d.setFont(new Font ("Helvetica", Font.BOLD, 14));
-                y = println("Database" + BLANK_SPACE + "(" + t.getBancheDati().size() + ")", x, y, s*5, g2d);
+                y = println(g2d, "Database" + BLANK_SPACE + "(" + t.getBancheDati().size() + ")", x, y, s*5);
             }
             // Draw to the page
             float[] dashingPattern1 = {1f, 1f};
@@ -918,9 +932,22 @@ public class DocWrapper extends DocumentGenerator implements Constants {
                     break;
                 }
             }
+            // Prepara info di ritorno
+            int[] data = {dbIndex, y};
+            // Extra info
+            if (y < 500) {
+                g2d.setFont(new Font ("Helvetica", Font.BOLD, 14));
+                y = println(g2d, "Ulteriori informazioni:", x, y, s*5);
+                String text = cleanHtml(t.getExtraInfo());
+                String[] textAsArray = wrapText(g2d, text, 600);
+                g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
+                for (int i = 0; i < textAsArray.length; i++) {
+                    y = println(g2d, textAsArray[i], x, y, s*2);
+                }
+            }
             // Add the page to the document
             doc.addPage(page);
-            return dbIndex;
+            return data;
         } catch (AttributoNonValorizzatoException anve) {
             String msg = FOR_NAME + "Problema nel recupero di un attributo obbligatorio del bean.\n" + anve.getMessage();
             log.severe(msg);
@@ -966,7 +993,7 @@ public class DocWrapper extends DocumentGenerator implements Constants {
             String[] textAsArray = wrapText(g2d, text, 600);
             g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
             for (int i = 0; i < textAsArray.length; i++) {
-                y = println(textAsArray[i], x, y, s*2, g2d);
+                y = println(g2d, textAsArray[i], x, y, s*2);
             }
             // Add the page to the document
             doc.addPage(page);
@@ -1054,14 +1081,51 @@ public class DocWrapper extends DocumentGenerator implements Constants {
         makeKindOfDataPage(pf, doc, t);
         makeExpireTimePage(pf, doc, t);
         makeSecMeasurePage(pf, doc, t);
-        count = makeDBLocationPage(pf, doc, t, NOTHING);
+        int countArray[] = makeDBLocationPage(pf, doc, t, NOTHING);
+        count = countArray[NOTHING];
         if (count > NOTHING) {
-            count = makeDBLocationPage(pf, doc, t, count);
+            countArray = makeDBLocationPage(pf, doc, t, count);
+            count = countArray[NOTHING];
             if (count > NOTHING) {
                 makeDBLocationPage(pf, doc, t, count);
             }
         }
-        makeExtraInfosPage(pf, doc, t);
+        if (countArray[ELEMENT_LEV_1] >= 500) {
+            makeExtraInfosPage(pf, doc, t);
+        }
+    }
+    
+    
+    public static void drawString(Graphics2D g, String s, int x, int y, int width)
+    {
+        // FontMetrics gives us information about the width,
+        // height, etc. of the current Graphics object's Font.
+        FontMetrics fm = g.getFontMetrics();
+
+        int lineHeight = fm.getHeight();
+
+        int curX = x;
+        int curY = y;
+
+        String[] words = s.split(" ");
+
+        for (String word : words)
+        {
+            // Find out thw width of the word.
+            int wordWidth = fm.stringWidth(word + " ");
+
+            // If text exceeds the width, then move to next line.
+            if (curX + wordWidth >= x + width)
+            {
+                curY += lineHeight;
+                curX = x;
+            }
+
+            g.drawString(word, curX, curY);
+
+            // Move over to the right for next word.
+            curX += wordWidth;
+        }
     }
     
     
@@ -1081,5 +1145,39 @@ public class DocWrapper extends DocumentGenerator implements Constants {
         }
     }
 
+    public static int println(Graphics2D graph2D, 
+                              String content, 
+                              int x1, 
+                              int y1, 
+                              int increment, boolean justify) {
+        graph2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        int newY = y1 + increment;
+        AttributedString as = new AttributedString(content);
+        as.addAttribute(TextAttribute.JUSTIFICATION, TextAttribute.JUSTIFICATION_FULL);
+        graph2D.drawString(as.getIterator(), x1, y1);
+        //graph2D.drawString(content, x1, newY);
+        return newY;
+    }
+    
+    
+    private static void drawString(Graphics2D graph2D, String text, float x, float y) {
+        graph2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        Font serifFont = new Font("Serif", Font.PLAIN, 10);
+        Font sansSerifFont = new Font("Monospaced", Font.PLAIN, 11);
+        AttributedString as = new AttributedString(text);
+        as.addAttribute(TextAttribute.FONT, serifFont);
+        as.addAttribute(TextAttribute.FONT, sansSerifFont, 2, 5);
+        as.addAttribute(TextAttribute.FOREGROUND, Color.red, 2, 5);
+        graph2D.drawString(as.getIterator(), x, y);
+    }
+    
+    private int drawString(Graphics2D g2d, String text, float x, float y, Font font, FontRenderContext frc)
+    {
+        TextLayout layout = new TextLayout(text, font, frc);
+        Rectangle2D r2d = layout.getBounds();
+        float xAdjusted = x - (float) r2d.getCenterX();
+        layout.draw(g2d, xAdjusted, y);
+        return (int) (layout.getAscent() + layout.getDescent());
+    }
     
 }
