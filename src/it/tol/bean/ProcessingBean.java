@@ -32,7 +32,6 @@
 
 package it.tol.bean;
 
-import java.io.Serializable;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,7 +47,7 @@ import it.tol.exception.AttributoNonValorizzatoException;
  * 
  * @author <a href="mailto:gianroberto.torre@gmail.com">Giovanroberto Torre</a>
  */
-public class ProcessingBean extends CodeBean implements Serializable {
+public class ProcessingBean extends CodeBean {
 
     /**
      * La serializzazione necessita di dichiarare una costante di tipo long
@@ -73,7 +72,7 @@ public class ProcessingBean extends CodeBean implements Serializable {
     private ArrayList<DepartmentBean> titolari;
     /**     Responsabile del trattamento                                                    */
     private DepartmentBean responsabile;
-    /**     Attivit&agrave; del trattamento                                                        */
+    /**     Attivit&agrave; del trattamento                                                 */
     private ArrayList<ActivityBean> attivita;
     /**     Categorie di interessati dal trattamento                                        */
     private ArrayList<CodeBean> interessati;
@@ -191,7 +190,7 @@ public class ProcessingBean extends CodeBean implements Serializable {
     }
 
     /**
-     * @param descrizione the descrizione to set
+     * @param note the descrizione to set
      */
     public void setDescrizione(String note) {
         this.descrizione = note;
