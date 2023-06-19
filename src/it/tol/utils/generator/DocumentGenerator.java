@@ -32,12 +32,21 @@
 
 package it.tol.utils.generator;
 
+import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.RenderingHints;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineBreakMeasurer;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
 import java.io.File;
 import java.io.IOException;
+import java.text.AttributedCharacterIterator;
+import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -61,6 +70,18 @@ public class DocumentGenerator implements Constants {
      */
     private static final long serialVersionUID = 8277760460032134941L;
     /**
+     * Il metodo length() di String restituisce un valore espresso in 
+     * Unicode Code Units, cio&egrave; in colonne, non in pixel. 
+     * Per comparare questo valore restituito con un valore in pixel, 
+     * bisogna moltiplicare il valore restituito per un fattore fisso, 
+     * derivante dal rapporto tra pixel e Unicode Code Units.
+     * Quindi per calcolare una larghezza in Unicode Code Units
+     * bisogna dividere width in pixel per 7.5 mentre per 
+     * ottenere una larghezza in pixel bisogna moltiplicare 
+     * String.length() per 7.5 
+     */
+    private static final double UNICODE_CODE_UNITS_FACTOR = 7.5;
+    /**
      * Larghezza pagina pdf
      */
     private static double paperWidth = 8.5;
@@ -73,7 +94,7 @@ public class DocumentGenerator implements Constants {
      */
     private static double paperUnit = 72.0;
     /**
-     * Posizionamento orizzontale elementi da collocare in pagina pdf
+     * Margine sinistro pagina pdf
      */
     protected static final int x = 80;
             
@@ -127,8 +148,8 @@ public class DocumentGenerator implements Constants {
     
     
     /**
-     * Restituisce una nuova coordinata a partire da una vecchia coordinata ed un 
-     * incremento, entrambi passati come parametri.
+     * Restituisce una nuova coordinata a partire da una vecchia coordinata 
+     * ed un incremento, entrambi passati come parametri.
      * 
      * @param coord     la coordinata originaria
      * @param increment l'incremento da sommare (algebricamente)
@@ -142,123 +163,143 @@ public class DocumentGenerator implements Constants {
     
     /**
      * Stampa una riga di testo, ricevuta sotto forma di parametro di tipo String,
-     * in un oggetto di tipo Graphics2D, che fornisce controllo fine su una serie di aspetti,
-     * come geometria, coordinate, gestione del colore e impaginazione del testo, il tutto
-     * finalizzato al rendering2-dimensionale di forme, testo e immagini; tale oggetto
-     * viene passato come parametro e manipolato per riferimento. 
-     * La pagina di un documento PDF pu&ograve; essere vista, infatti, come un piano 
-     * (della geometria/algebra lineare) e in questo senso bisogna calcolare le coordinate
-     * x e y per ogni posizionamento di testo si voglia fare nella pagina stessa.
+     * in un oggetto di tipo Graphics2D, che fornisce controllo fine su una serie 
+     * di aspetti, come geometria, coordinate, gestione del colore e impaginazione 
+     * del testo, il tutto finalizzato al rendering2-dimensionale di forme, testo 
+     * e immagini; tale oggetto viene passato come parametro e manipolato per 
+     * riferimento. 
+     * La pagina di un documento PDF pu&ograve; essere vista, infatti, come un 
+     * piano (della geometria/algebra lineare) e in questo senso bisogna calcolare 
+     * le coordinate x e y per ogni posizionamento di testo si voglia fare 
+     * nella pagina stessa.
+     * 
      * @param graph2D   l'oggetto Graphics2D in cui impostare la stampa
-     * @param content   la String da stampare
+     * @param line      la String corrispondente alla riga di testo da stampare
      * @param x1        la coordinata orizzontale in cui iniziare il posizionamento orizzontale della String
      * @param y1        la coordinata verticale relativa all'ultimo posizionamento prima del corrente; se non ci sono stampe precedenti, corrisponde all'inizializzazione della coordinata y
      * @param increment l'incremento cui sottoporre la coordinata verticale (y)
-     * 
      * @return <code>int</code> - il valore della coordinata y incrementata dell'incremento i: corrisponde al valore della coordinata verticale in base alla quale è stata stampata la stringa String
      */
     public static int println(Graphics2D graph2D, 
-                              String content, 
+                              String line, 
                               int x1, 
                               int y1, 
                               int increment) {
-        int newY = y1 + increment;
-        graph2D.drawString(content, x1, newY);
-        return newY;
+        int y2 = y1 + increment;
+        graph2D.drawString(line, x1, y2);
+        return y2;
+    }
+
+    
+    /**
+     * Stampa un'area di testo ricevuta sotto forma di parametro di tipo String,
+     * in un oggetto di tipo TextLayout, tramite un oggetto di tipo Graphics2D
+     * passato come parametro e manipolato per riferimento.
+     * 
+     * @param graph2D   l'oggetto Graphics2D da usare per la stampa
+     * @param text      la String corrispondente all'area di testo da stampare
+     * @param x1        la coordinata orizzontale in cui iniziare il posizionamento orizzontale della String
+     * @param y1        la coordinata verticale relativa all'ultimo posizionamento prima del corrente; se non ci sono stampe precedenti, corrisponde all'inizializzazione della coordinata y
+     * @param increment l'incremento cui sottoporre la coordinata verticale (y)
+     * @param width     la larghezza dell'area stampabile, in pixel
+     * @return <code>int</code> - il valore della coordinata y incrementata dell'incremento i: corrisponde al valore della coordinata verticale in base alla quale è stata stampata la stringa String
+     */
+    public static void print(Graphics2D graph2D, 
+                            String text, 
+                            int x1, 
+                            int y1, 
+                            int increment, 
+                            int width) {
+        // Incapsula la coordinata verticale
+        float y2 = y1;
+        // Imposta l'anti-alias
+        graph2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        // Recupera il font
+        Font font = graph2D.getFont();
+        // Crea una stringa con attributi di formattazione
+        AttributedString as = new AttributedString(text);
+        // Imposta il font
+        as.addAttribute(TextAttribute.FONT, font);
+        // Imposta l'allineamento del testo
+        as.addAttribute(TextAttribute.JUSTIFICATION, TextAttribute.JUSTIFICATION_FULL);
+        // Iteratore per testo e relativi attributi
+        AttributedCharacterIterator aci = as.getIterator();
+        // Misuratore di testo
+        FontRenderContext frc = graph2D.getFontRenderContext();
+        // Misuratore di linea
+        LineBreakMeasurer lbm = new LineBreakMeasurer(aci, frc); 
+        // Produce l'output
+        while (lbm.getPosition() < aci.getEndIndex()) { 
+            TextLayout textLayout = lbm.nextLayout(width); 
+            //y2 += textLayout.getAscent();
+            TextLayout justifiedLayout = textLayout.getJustifiedLayout(width);
+            y2 += increment;
+            justifiedLayout.draw(graph2D, x1, y2); 
+            y2 += textLayout.getDescent() + textLayout.getLeading();  
+        }
     }
     
     
     /**
-     * Il metodo length() di String restituisce un valore espresso in unicode code units
-     * Facciamo conto che la larghezza stampabile nella pagina sia di 80 colonne,
-     * e quindi di 80 Unicode Code Units.
-     * Siccome sappiamo che la larghezza stampabile è di 600 pixel,
-     * ricaviamo il rapporto tra pixel e punti dividendo pixel / punti,
-     * ovvero nel caso specifico 600 / 80 = 7.5
-     * Quindi per calcolare la larghezza massima in Unicode Code Units
-     * dobbiamo dividere width per 7.5 oppure moltiplicare content.length per 7.5 
+     * Stampa un'area di testo ricevuta sotto forma di parametro di tipo String,
+     * in un oggetto di tipo TextLayout, tramite un oggetto di tipo Graphics2D
+     * passato come parametro e manipolato per riferimento.
+     * 
+     * @param graph2D   l'oggetto Graphics2D da usare per la stampa
+     * @param text      la String corrispondente all'area di testo da stampare
+     * @param x1        la coordinata orizzontale in cui iniziare il posizionamento orizzontale della String
+     * @param y1        la coordinata verticale relativa all'ultimo posizionamento prima del corrente; se non ci sono stampe precedenti, corrisponde all'inizializzazione della coordinata y
+     * @param increment l'incremento cui sottoporre la coordinata verticale (y)
+     * @param width     la larghezza dell'area stampabile, in pixel
+     * @return <code>int</code> - il valore della coordinata y incrementata dell'incremento i: corrisponde al valore della coordinata verticale in base alla quale è stata stampata la stringa String
      */
-    public static int println(Graphics2D graph2D, 
-                              String row, 
-                              int x1, 
-                              int y1, 
-                              int increment, 
-                              int width) {
-        // Calcola la nuova ordinata (riferimento per la successiva riga)
-        int y2 = y1 + increment;
-        // Trasforma la larghezza dell'area stampabile (espressa in pixel) in Unicode Code Units
-        double printableArea = (width / 7.5);
-        // La stringa corrente corrisponde a una riga di testo: la misura (valore espresso in Unicode Code Units)
-        double rowLength = row.length();
-        // Cerca la fine della prima parola
-        int position = row.indexOf(" ", NOTHING); int position2 = NOTHING;
-        // Crea uno StringBuilder a partire dalla riga
-        StringBuilder sb = new StringBuilder(row);
-        
-        String row3 = row;
-        
-        // Se la lunghezza della riga è minore della larghezza limite
-        if (rowLength < printableArea) {
-            
-            // Aggiunge uno spazio extra dopo la parola
-            sb.insert(position, " ");
-            String row2 = sb.toString();
-            // Ricalcola la lunghezza della riga modificata 
-            rowLength = row2.length();
-            // Misura un'altra volta la riga: se è ancora minore della larghezza
-            while (rowLength < printableArea) {
-                position += 3;
-                // Cerca la fine della parola successiva
-                position2 = row2.indexOf(" ", position);
-                // Controlla il caso in cui il carattere non sia stato trovato
-                if (position2 == DEFAULT_ID) {
-                    break;
-                }
-                // Aggiunge uno spazio extra dopo la parola ‎successiva
-                sb = new StringBuilder(row2);
-                sb.insert(position2, "  ");
-                row3 = sb.toString();
-                // Se la stringa è finita esce
-                if (position2 >= row.length()) {
-                    break;
-                }
-                // Altrimenti prepara le variabili per rientrare
-                position = position2;
-                row2 = row3;
-                // Misura un'altra volta la riga: etc. etc.
-                rowLength = row3.length();
-            }
-            
+    public static String print(Graphics2D graph2D, 
+                            String text, 
+                            int x1, 
+                            int y1, 
+                            int increment, 
+                            int width,
+                            int boundary) {
+        // Variabili locali
+        String textIn = null;
+        String textOut = null;
+        // Incapsula la coordinata verticale
+        float y2 = y1; 
+        // Recupera la lunghezza del testo
+        int length = text.length();
+        // Se il testo è troppo lungo per stare nella pagina, ne prende una parte
+        if (length > boundary) {
+            textIn = truncateTo(text, boundary);
+            textOut = truncateFrom(text, textIn.length());
+        } else {
+            textIn = text;
         }
-        
-        // Agginge uno spazio extra dopo la seconda parola
-        
-        // ...e così via
-        
-       /*        StringBuffer content = new StringBuffer();
-        int textRowWidth = textRow.length();
-        
-        if (textRowWidth*7 < width) {
-            // Spezza la riga in parole
-            String[] words = textRow.split(" ");
-            for (int i = 0; i < words.length; i++) {
-                content.append(words[i]).append(" ");
-                if (String.valueOf(content).length()*7 < width) {
-                    content.append("   ");
-                }
-                //textRow = String.valueOf(content);
-                //textRowWidth = textRow.length();
-                if (textRowWidth*7 > width)
-                    break;
-            }
-             * StringTokenizer st = new StringTokenizer(textRow);
-            for (int i = 1; i < st.countTokens() - 2; i++) {
-               content.append(st.nextToken()).append(" ");
-            }
-        }*/
-    
-        graph2D.drawString(row3, x1, y2);
-        return y2;
+        // Imposta l'anti-alias
+        graph2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        // Recupera il font
+        Font font = graph2D.getFont();
+        // Crea una stringa con attributi di formattazione
+        AttributedString as = new AttributedString(textIn);
+        // Imposta il font
+        as.addAttribute(TextAttribute.FONT, font);
+        // Imposta l'allineamento del testo
+        as.addAttribute(TextAttribute.JUSTIFICATION, TextAttribute.JUSTIFICATION_FULL);
+        // Iteratore per testo e relativi attributi
+        AttributedCharacterIterator aci = as.getIterator();
+        // Misuratore di testo
+        FontRenderContext frc = graph2D.getFontRenderContext();
+        // Misuratore di linea
+        LineBreakMeasurer lbm = new LineBreakMeasurer(aci, frc); 
+        // Produce l'output
+        while (lbm.getPosition() < aci.getEndIndex()) { 
+            TextLayout textLayout = lbm.nextLayout(width); 
+            //y2 += textLayout.getAscent();
+            TextLayout justifiedLayout = textLayout.getJustifiedLayout(width);
+            y2 += increment;
+            justifiedLayout.draw(graph2D, x1, y2); 
+            y2 += textLayout.getDescent() + textLayout.getLeading();  
+        }  
+        return textOut;
     }
     
     
@@ -344,6 +385,7 @@ public class DocumentGenerator implements Constants {
     public static String cleanHtml(String html) {
         String text = html.replaceAll("<p style=\"text-align: justify;\">", VOID_STRING)
                           .replaceAll("</p>", VOID_STRING)
+                          .replaceAll("<li style=\"text-align: justify;\">", " ●")
                           .replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", VOID_STRING)
                           .replaceAll("&ndash;", String.valueOf(HYPHEN))
                           .replaceAll("&rsquo;", String.valueOf(APOSTROPHE))
@@ -355,6 +397,28 @@ public class DocumentGenerator implements Constants {
                           .replaceAll("&ograve;", "ò")
                           .replaceAll("&ugrave;", "ù");
         return text;
+    }
+    
+    
+    public static String truncateTo(final String content, 
+                                    final int lastIndex) {
+        String result = content.substring(NOTHING, lastIndex);
+        if (content.charAt(lastIndex) != BLANK_SPACE) {
+            return result.substring(NOTHING, result.lastIndexOf(BLANK_STRING));
+        }
+        return result;
+    }
+    
+    
+    public static String truncateFrom(final String content, 
+                                      final int fromIndex) {
+        int start = fromIndex;
+        String result = content.substring(fromIndex);
+        while (content.charAt(start) != BLANK_SPACE) {
+            start--;
+            result = result.substring(start, content.length());
+        }
+        return result.trim();
     }
     
 }
