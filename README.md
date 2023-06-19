@@ -208,7 +208,9 @@ genera una versione.<br />
 - [1.2.2] (23/11/2022) Aggiunta funzionalit&agrave; di download albero completo processi in formato CSV
 - [1.2.1] (22/11/2022) Mostrato in nodo albero processi numero di input e fasi
 - [1.2.0] (21/11/2022) Implementato questo file di documentazione
+- [1.0.8] (26/06/2023) Perfezionata formattazione registro PDF scaricabile: condizionata visualizzazione attivit&agrave;, presentazione titolare all'inizio in trattamenti di tipo R
 -->
+- [1.0.7] (19/06/2023) Correzioni di formattazione in registro PDF scaricabile: gestione "orfani", "vedove", testo giustificato
 - [1.0.6] (24/05/2023) Aggiunte nel registro PDF informazioni su: destinatari; termini di cancellazione dati; misure di sicurezza; luoghi di custodia; db; ulteriori info
 - [1.0.5] (22/05/2023) Aggiunta possibilità di esportare elenco trattamenti o dettaglio singolo trattamento in formato PDF
 - [1.0.4] (27/04/2023) Aggiunta visualizzazione basi giuridiche, banche dati, icone
