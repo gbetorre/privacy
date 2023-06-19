@@ -316,6 +316,10 @@ public interface Constants extends Serializable {
      */
     public static final String VOID_STRING = "";
     /**
+     * Incapsula in String il carattere di spazio
+     */
+    public static final String BLANK_STRING = String.valueOf(BLANK_SPACE);
+    /**
      * <p>Costante da utilizzare quando serve un valore per inizializzazione
      * di default di un parametro mancante sulla querystring.</p>
      * <p>Incapsula il trattino lungo (—), o dash, che viene utilizzato come default
