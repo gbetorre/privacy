@@ -34,12 +34,14 @@
           Protezione dei Dati (DPO)</strong>&nbsp;
         </dt>
         <dd class="list-group-item marginLeft">
-          GL CONSULTING S.R.L.<br>
-          Soggetto individuato quale referente<br> 
-          per il titolare: Gianluca Lombardi<br>
-          Tel. 0312242323 / 3482345012<br>
-          E-mail: info@gianlucalombardi.com<br>
-          PEC: gianluca.lombardi@ingpec.eu<br>
+          Prof. Mirko Faccioli<br>
+          Associato di Diritto Privato afferente al Dipartimento <br> 
+          di Ingegneria per la medicina di innovazione<br>
+          Responsabile della Protezione dei Dati (RPD/DPO) <br>
+          dell’Ateneo, a decorrere dal 1° aprile 2026<br>
+          D.R. 1865/2026 del 25/02/2026<br>
+          E-mail UniVr: mirko.faccioli@univr.it<br>
+          E-mail &nbsp;DPO: dpo@ateneo.univr.it
         </dd>
       </dl>
     </div>
@@ -64,12 +66,13 @@
           Protezione dei Dati (DPO)</strong>&nbsp;
         </dt>
         <dd class="list-group-item marginLeft">
-          GL CONSULTING S.R.L.<br>
           Soggetto individuato quale referente<br> 
-          per il titolare: Gianluca Lombardi<br>
-          Tel. 0312242323 / 3482345012<br>
-          E-mail: info@gianlucalombardi.com<br>
-          PEC: gianluca.lombardi@ingpec.eu<br>
+          per il titolare: <br>
+          Prof. Mirko faccioli - Associato di Diritto Privato<br>
+          Afferente al Dipartimento di Ingegneria<br> 
+          per la medicina di innovazione<br>
+          E-mail UniVr: mirko.faccioli@univr.it<br>
+          E-mail &nbsp;DPO: dpo@ateneo.univr.it
         </dd>
       </dl>
     </div>
