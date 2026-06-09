@@ -284,16 +284,16 @@ public class DocWrapper extends DocumentGenerator {
         g2d.setFont(new Font ("Arial", Font.BOLD, 11));
         y = println(g2d, "Responsabile della Protezione", getCoordinate(x, i), y, i);
         g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
-        g2d.drawString("GL CONSULTING S.R.L.", getCoordinate(x, i*11), y);
+        g2d.drawString("Prof. Mirko Faccioli", getCoordinate(x, i*11), y);
         g2d.setFont(new Font ("Arial", Font.BOLD, 11));
         y = println(g2d, "dei Dati (DPO)", getCoordinate(x, i), y, i);
         g2d.setFont(new Font ("Arial", Font.PLAIN, 11));
         g2d.drawString("Soggetto individuato quale referente", getCoordinate(x, i*11), y);
         y = println(g2d, " per il titolare:", getCoordinate(x, i*11), y, i);
-        y = println(g2d, "Gianluca Lombardi", getCoordinate(x, i*11), y, i);
-        y = println(g2d, "Tel. 0312242323 / 3482345012", getCoordinate(x, i*11), y, i);
-        y = println(g2d, "E-mail: info@gianlucalombardi.com", getCoordinate(x, i*11), y, i);
-        println(g2d, "PEC: gianluca.lombardi@ingpec.eu", getCoordinate(x, i*11), y, i);
+        y = println(g2d, "Prof. Mirko Faccioli", getCoordinate(x, i*11), y, i);
+        y = println(g2d, "Associato di Diritto Privato", getCoordinate(x, i*11), y, i);
+        y = println(g2d, "E-mail UniVr: mirko.faccioli@univr.it", getCoordinate(x, i*11), y, i);
+        println(g2d, "E-mail DPO: dpo@ateneo.univr.it", getCoordinate(x, i*11), y, i);
         doc.addPage(page);
     }
     
