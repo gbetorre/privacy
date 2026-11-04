@@ -1,0 +1,192 @@
+publiccodeYmlVersion: "0.2"
+name: TOL-TR
+url: https://github.com/gbetorre/privacy/
+landingURL: https://gbetorre.github.io/privacy/
+softwareVersion: '1.0.7'
+releaseDate: '2026-06-09'
+#logo: https://github.com/gbetorre/privacy/blob/main/web/img/logo1.png
+platforms:
+  - web
+categories:
+  - workflow-management
+  - web-collaboration
+  - business-process-management
+usedBy:
+  - Università degli Studi di Verona
+#roadmap: https://github.com/gbetorre/privacy/blob/main/README.md#Roadmap  
+developmentStatus: development
+softwareType: standalone/web
+description:
+  it:
+    genericName: Applicazione Web
+    localisedName: "TOL-TR: Trattamenti On Line-Registro delle attività di Trattamento"
+    shortDescription: 'Applicazione web per il tracciamento e la gestione della privacy riguardante i database contenenti dati personali in una organizzazione.'
+    longDescription: |
+      ## Definizione
+      
+      un **Registro delle Attività di Trattamento** è un archivio documentale, 
+      di natura assai specifica, che le organizzazioni di grandi dimensioni, 
+      che trattano dati personali, sono tenute ad adottare dalla legge.
+      
+      
+      ## Introduzione
+      
+      In qualità di fruitori di servizi erogati da organizzazioni, siamo ormai 
+      abituati a sottoscrivere contratti digitali, accettare condizioni, 
+      e mettere il “visto” a disclaimer sempre più numerosi e disparati. 
+      
+      Molti di questi, corrispondono a veri e propri **contratti** 
+      tra l’utente e l’organizzazione, contratti che sottintendono un trattamento 
+      di dati e personali e, in questo senso, sono strettamente normati.
+
+      
+      ## Obiettivo
+      
+      Uno degli adempimenti fondamentali per le organizzazioni 
+      che trattano dati personali è che venga tenuto un **Registro 
+      delle Attività di Trattamento dei dati personali**, ovvero 
+      un archivio documentale in cui vengono descritte tutte 
+      le attività di trattamento dei dati personali effettuate all'interno 
+      dell'organizzazione stessa. 
+      
+      Il Registro deve contenere informazioni quali la descrizione 
+      delle finalità del trattamento, le categorie di dati personali trattati, 
+      le categorie di soggetti interessati e le misure di sicurezza adottate 
+      per proteggere i dati.
+      
+      Questo software realizza tale obiettivo, fornendo un registro 
+      dematerializzato che può essere di agevole consultazione e di
+      facile aggiornamento, adatto anche a produrre, in tempo reale, 
+      un'istantanea di ciò che sta avvenendo all'interno dell'organizzazione
+      relativamente al trattamento dei dati personali degli utenti. 
+      
+      
+      ## Vantaggi
+             
+      Per gli uffici competenti in materia di protezione dei dati personali 
+      ottenere una versione informatizzata del Registro consente, fin da subito, 
+      una gestione più agevole e un’interrogazione più efficiente del 
+      Registro stesso, effettuabile p.es. tramite ricerche di stringhe testuali 
+      o direttamente tramite query. 
+      
+      I responsabili della privacy interni all'organizzazione divengon in grado 
+      di individuare quali sono i database che, nel contesto delle attività 
+      organizzative, memorizzano dati relativi agli utenti; l'obiettivo è 
+      permettere di analizzare nel dettaglio tali database, ottenendo una serie 
+      di informazioni indicative delle tipologie di dati inseriti 
+      in ciascun database e proporre le contromisure adeguate, laddove 
+      venga evidenziata una carenza nelle misure di sicurezza attuate 
+      per proteggere i dati stessi. 
+      
+      Attraverso l'alimentazione di una base dati, l'applicazione permette 
+      di ottenere una serie di indici relativi a specifici rischi cui 
+      possono essere esposti i database organizzativi presidiati 
+      dalle strutture appartenenti all'organizzazione. 
+      
+      Ottenere e mantenere un registro digitale delle attività di trattamento, 
+      oltre a rendere l'organizzazione in regola rispetto a quanto 
+      previsto dalle norme (cfr. Regolamento UE 2016/679, art. 30), 
+      offre all'organizzazione stessa la possibilità di disporre di 
+      appositi strumenti di ricerca utili per consentire all'ufficio privacy 
+      di ottenere indici sintetici riguardo ai dati personali che vengono 
+      trattati dall'organizzazione. 
+      
+      Inoltre, disporre di uno strumento informatizzato che gestisce 
+      tale registro digitale offre una serie ulteriore di vantaggi, tra cui:
+
+      - possibilità di rigenerare il registro digitale da un anno all'altro operando poi per differenza rispetto all'anno precedente;
+      - possibilità di esportazione dei dati in formato aperto (p.es. CSV o RTF);
+      - possibilità di generare infografiche riassuntive ed indici sintetici;
+      - possibilità di ottenere rapidamente estrazioni dati da presentare all'autorità competente, in caso di ispezioni;
+      - possibilità di effettuare Query analitiche sui dati trattati, che consentano di risalire alle misure di sicurezza messe in atto, e alle strutture interessate, in caso di data breach.
+      
+      Ma anche, non ultima:
+
+      - possibilità di effettuare monitoraggi mirati in merito all’avanzamento della compilazione del Registro stesso.
+      
+      
+      ## Sviluppi futuri
+      
+      La dematerializzazione del Registro delle attività di trattamento 
+      dati personali tramite un sistema software può essere utile perché,
+      come già accennato, consente di avere sempre a disposizione una versione 
+      aggiornata e facilmente accessibile del Registro stesso. 
+
+      Inoltre, utilizzando un sistema software, è potenzialmente possibile 
+      automatizzare alcune attività, come la notifica agli uffici competenti 
+      in caso di modifiche alla descrizione delle attività di trattamento.
+      
+      Utilizzando un software di registrazione dei trattamenti 
+      sarebbe anche possibile monitorare in modo automatico 
+      gli eventi di trattamento ed essere in grado di rispondere 
+      tempestivamente a eventuali incidenti di sicurezza.
+      
+      
+      ## Conclusioni
+      
+      Naturalmente, nessuno strumento informatico è in grado, da solo, 
+      di ottenere risultati come l'annullamento del danno in caso di data breach; 
+      pertanto ogni approfondimento analitico permesso dal software 
+      dovrà essere esaminato ed interpretato dai _privacy specialists_.
+
+    documentation: https://github.com/gbetorre/privacy/blob/main/README.md  
+    features:
+      - 'Rappresentazione dinamica dei trattamenti dei dati personali e dei soggetti coinvolti'
+      - 'Integrazione con sistemi di identità digitale'
+      - 'Interfaccia web responsive e accessibile'
+      - 'Suddivisione dei trattamenti in base al ruolo (Titolare / Responsabile)'
+      - 'Possibilità di generare un report globale di tutti i trattamenti'
+      - 'Possibilità di generare un report specifico per ogni singolo trattamento'
+      - 'Possibilità di effettuare estrazioni dati da base dati relazionale'
+      - 'Possibilità di filtrare i dati presentati in modo facile e rapido'
+      - 'Possibilità di consultare i dettagli di ogni singolo trattamento'
+      - 'Paginazione dei risultati'
+    screenshots:
+      - 'https://github.com/gbetorre/privacy/blob/main/web/img/product-screenshot.png'
+      - 'https://github.com/gbetorre/privacy/blob/main/web/img/product-screenshot2.png'
+      - 'https://github.com/gbetorre/privacy/blob/main/web/img/product-screenshot3.png'
+
+legal:
+  license: GPL-3.0-or-later
+  mainCopyrightOwner: Giovanroberto Torre
+  repoOwner: Giovanroberto Torre
+  authorsFile: https://raw.githubusercontent.com/gbetorre/privacy/blob/main/AUTHORS
+
+maintenance:
+  type: internal
+  contacts:
+    - name: Giovanroberto Torre
+      email: gianroberto.torre@gmail.com
+      phone: "+390458028506"
+      affiliation: Università degli Studi di Verona
+    - name: Angelo Mazzotta
+      email: angelo.mazzotta@univr.it 
+      phone: "+390458028752"
+      affiliation: Università degli Studi di Verona 
+
+localisation:
+  localisationReady: true
+  availableLanguages:
+    - it
+      
+intendedAudience:
+  scope:
+    - government
+    - local-authorities
+
+# Estensione obbligatoria per i software censiti nel catalogo italiano ANAC / Developers Italia
+it:
+  countryExtensionVersion: '0.2'
+  conforme:
+     lineeGuidaDesign: true
+     modelloInteroperabilita: false
+     misureMinimeSicurezza: true
+     gdpr: false
+  piattaforme:
+     spid: false
+     cie: false
+     anpr: false
+     pagopa: false
+  riuso:
+     codiceIPA: uni_vr
+     
