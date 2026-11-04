@@ -1,0 +1,25 @@
+Contributors-Readme-Action
+
+Contributors-Readme-Action is a simple GitHub action to automate contributors list in README file. Not only contributors, collborators, bots or any user.
+
+In this case, this AUTHORS file has been generated with the following commands:
+
+
+$ cd git/privacy/
+
+$ git shortlog -sne > AUTHORS
+
+    79	gbetorre <gianroberto.torre@gmail.com>
+     2	gbetorre <giovanroberto.torre@univr.it>
+     1	gbetorre <61409177+gbetorre@users.noreply.github.com>
+
+Using this other command, however:
+
+~/git/privacy$ git log --format='%aN <%aE>' | sort -uf
+
+we get:
+
+gbetorre <61409177+gbetorre@users.noreply.github.com>
+gbetorre <gianroberto.torre@gmail.com>
+gbetorre <giovanroberto.torre@univr.it>
+
