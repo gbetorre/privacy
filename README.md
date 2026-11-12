@@ -262,7 +262,7 @@ e fornirvi il relativo significato e la relativa motivazione.
 [product-screenshot2]: https://github.com/gbetorre/privacy/blob/main/web/img/product-screenshot2.png
 [product-screenshot3]: https://github.com/gbetorre/privacy/blob/main/web/img/product-screenshot3.png
 [issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
-[issues-url]: https://github.com/othneildrew/Best-README-Template/issues
+[issues-url]: https://github.com/gbetorre/privacy/issues
 [license-shield]: https://img.shields.io/badge/license-GPL-blue
 [license-url]: https://github.com/gbetorre/privacy/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
